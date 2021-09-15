@@ -25,8 +25,11 @@
     <body>
 		<div id = "container"></div>
         <script src = "three.js"></script>
-        <script src = "FBXLoader.js"></script>
+	    <!--<script src = "FBXLoader.js"></script>-->
 		<script type = "module">
+
+			import { FBXLoader } from 'FBXLoader.js';
+
             let scene, renderer, camera, stats;
 			let model, skeleton, mixer, clock;
 
@@ -90,8 +93,8 @@
 				scene.add( grid );*/
 
 				// model
-				/*const loader = new FBXLoader();
-				loader.load( 'models/fbx/Samba Dancing.fbx', function ( object ) {
+				const loader = new FBXLoader();
+				loader.load( 'models/SambaDancing.fbx', function ( object ) {
 
 					mixer = new THREE.AnimationMixer( object );
 
@@ -111,7 +114,7 @@
 
 					scene.add( object );
 
-				} );*/
+				} );
 
 
 /*
@@ -143,9 +146,9 @@
 
 				requestAnimationFrame( animate );
 
-			/*	const delta = clock.getDelta();
+			/*	const delta = clock.getDelta();*/
 
-				if ( mixer ) mixer.update( delta );*/
+				if ( mixer ) mixer.update( delta );
 
 				renderer.render( scene, camera );
 
