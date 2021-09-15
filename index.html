@@ -24,11 +24,13 @@
     </head>
     <body>
 		<div id = "container"></div>
-        <script src = "three.js"></script>
-	    <!--<script src = "FBXLoader.js"></script>-->
+    <!--    <script src = "build/three.js"></script>
+	    <script src = "examples/jsm/loaders/"></script>-->
 		<script type = "module">
 
-			import { FBXLoader } from 'FBXLoader.js';
+			import * as THREE from '/build/three.module.js';
+			import { FBXLoader } from '/examples/jsm/loaders/FBXLoader.js';
+			//import { FBXLoader } from './FBXLoader.js';
 
             let scene, renderer, camera, stats;
 			let model, skeleton, mixer, clock;
