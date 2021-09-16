@@ -23,29 +23,47 @@
 		</style>
     </head>
     <body>
-		<div class = "container"></div>
-        <script src = "three.js"></script>
+		<script src = "three.js"></script>
+        <script src = "js/main.js"></script>
+
+		<div class = "container">
+			<div id = "openPackageButton" type = "button">
+				<div class = "blockInButton">
+					<img src="images/open_icon.svg">
+					<span>Open Package</span>
+				</div>
+			</div>
+			<div id = "backButton" type = "button">
+				<div class = "blockInButton">
+					<img src="images/Vector4.svg">
+					<span>Back</span>
+				</div>
+			</div>
+		</div>
 
 		<script type = "module">
 
-			import { OrbitControls } from 'https://cdn.jsdelivr.net/npm/three@0.121.1/examples/jsm/controls/OrbitControls.js'
+			import { OrbitControls } from './three/examples/jsm/controls/OrbitControls.js'
         	import { FBXLoader } from './three/examples/jsm/loaders/FBXLoader.js'
-
+			import { GLTFLoader } from './three/examples/jsm/loaders/GLTFLoader.js';
+			import { TWEEN } from './three/examples/jsm/libs/tween.module.min.js'
 			//import { FBXLoader } from 'FBXLoader.js';
 
             let scene, renderer, camera, stats;
 			let model, skeleton, mixer, clock;
-
+			let orbitcontrol, main_action;
 			const crossFadeControls = [];
 
 			let idleAction, walkAction, runAction;
 			let idleWeight, walkWeight, runWeight;
 			let actions, settings;
+			let isOpenMainModel = false;
 
 			let singleStepMode = false;
 			let sizeOfNextStep = 0;
 
 			init();
+			let mainmodel, ingectionSyringeModel, needle1Model, needle2Model;
 
 			function init() {
 
@@ -55,11 +73,11 @@
 				camera.position.set( 1, 4, - 3 );
 				camera.lookAt( 0, 1, 0 );
 
-				//clock = new THREE.Clock();
+				clock = new THREE.Clock();
 
 				scene = new THREE.Scene();
 				scene.background = new THREE.Color("rgb(133,202,237)");
-				scene.fog = new THREE.Fog("rgb(133,202,237)", 10, 50 );
+				scene.fog = new THREE.Fog("rgb(133,202,237)", 20, 60 );
 
 				renderer = new THREE.WebGLRenderer( { antialias: true } );
 				renderer.setPixelRatio( window.devicePixelRatio );
@@ -68,10 +86,14 @@
 				container.appendChild( renderer.domElement );
 
 				//OrbitControls
-				const controls = new OrbitControls(camera, renderer.domElement);
-				controls.update();
-				controls.enableDamping = true;
-				controls.minDistance = 40;
+				orbitcontrol = new OrbitControls(camera, renderer.domElement);
+				orbitcontrol.update();
+				orbitcontrol.maxPolarAngle = Math.PI / 2.5;
+				//orbitcontrol.minPolarAngle = Math.PI / 3;
+				orbitcontrol.enablePan = false;
+				orbitcontrol.dampingFactor = 0.1;
+				orbitcontrol.enableDamping = true;
+				orbitcontrol.minDistance = 40;
 
 				const hemiLight = new THREE.HemisphereLight( 0xffffff, 0x444444 );
 				hemiLight.position.set( 0, 20, 0 );
@@ -87,25 +109,33 @@
 				dirLight.shadow.camera.far = 40;
 				scene.add( dirLight );
 
-				// scene.add( new THREE.CameraHelper( dirLight.shadow.camera ) );
-
 				// ground
-				/*const mesh = new THREE.Mesh( new THREE.PlaneGeometry( 2000, 2000 ), new THREE.MeshPhongMaterial( { color: 0x999999, depthWrite: false } ) );
+				const mesh = new THREE.Mesh( new THREE.PlaneGeometry( 2000, 2000 ), new THREE.MeshPhongMaterial( { color: 0x999999, depthWrite: false } ) );
 				mesh.rotation.x = - Math.PI / 2;
+				mesh.position.y = -5;
 				mesh.receiveShadow = true;
-				scene.add( mesh );*/
+				scene.add( mesh );
 
-				/*const grid = new THREE.GridHelper( 2000, 20, 0x000000, 0x000000 );
-				grid.material.opacity = 0.2;
-				grid.material.transparent = true;
-				scene.add( grid );*/
 
-				// model
+
+				function dumpObject(obj, lines = [], isLast = true, prefix = '') {
+					const localPrefix = isLast ? '└─' : '├─';
+					lines.push(`${prefix}${prefix ? localPrefix : ''}${obj.name || '*no-name*'} [${obj.type}]`);
+					const newPrefix = prefix + (isLast ? '  ' : '│ ');
+					const lastNdx = obj.children.length - 1;
+					obj.children.forEach((child, ndx) => {
+						const isLast = ndx === lastNdx;
+						dumpObject(child, lines, isLast, newPrefix);
+					});
+					return lines;
+				}
+
 				
+				/*
 				const fbxLoader = new FBXLoader()
-				fbxLoader.load(
-					'models/nurbs.fbx',
-					(object) => {
+				model = fbxLoader.load(
+					'models/SambaDancing.fbx',
+					(pack_model) => {
 						// object.traverse(function (child) {
 						//     if ((child as THREE.Mesh).isMesh) {
 						//         // (child as THREE.Mesh).material = material
@@ -115,7 +145,9 @@
 						//     }
 						// })
 						// object.scale.set(.01, .01, .01)
-						scene.add(object)
+						scene.add(pack_model);
+						console.log(dumpObject(pack_model).join('\n'));
+						mainmodel = pack_model;
 					},
 					(xhr) => {
 						console.log((xhr.loaded / xhr.total) * 100 + '% loaded')
@@ -123,21 +155,64 @@
 					(error) => {
 						console.log(error)
 					}
-				)
+				);*/
+
+				const gltfLoader = new GLTFLoader();
+				gltfLoader.load('models/Stork.glb', (gltf) => {
+					const root = gltf.scene;
+					scene.add(root);
+					console.log(dumpObject(root).join('\n'));
+					mainmodel = root;
+					root.scale.set(.1, .1, .1);
+					root.rotation.set(0,0,0);
+
+					skeleton = new THREE.SkeletonHelper( root );
+					skeleton.visible = false;
+					scene.add( skeleton );
+
+					const clips = gltf.animations;
+					mixer = new THREE.AnimationMixer( root );
+					console.log(clips[0]);
 
 
-/*
-				const controls = new OrbitControls( camera, renderer.domElement );
-				controls.target.set( 0, 100, 0 );
-				controls.update();
+					main_action = mixer.clipAction(clips[0]);
 
-				window.addEventListener( 'resize', onWindowResize );
+					update();
+				});
 
-				// stats
-				stats = new Stats();
-				container.appendChild( stats.dom );
-*/
-            //Resize
+				gltfLoader.load('models/Flamingo.glb', (gltf) => {
+					const root = gltf.scene;
+					scene.add(root);
+					console.log(dumpObject(root).join('\n'));
+					ingectionSyringeModel = root;
+					root.scale.set(.1, .1, .1);
+					root.rotation.set(0,0,0);
+					root.position.set(-10,0,0);
+					root.visible = false;
+				});
+				
+				gltfLoader.load('models/Horse.glb', (gltf) => {
+					const root = gltf.scene;
+					scene.add(root);
+					console.log(dumpObject(root).join('\n'));
+					needle1Model = root;
+					root.scale.set(.05, .05, .05);
+					root.rotation.set(0,0,0);
+					root.position.set(0,0,0);
+					root.visible = false;
+				});
+
+				gltfLoader.load('models/Parrot.glb', (gltf) => {
+					const root = gltf.scene;
+					scene.add(root);
+					console.log(dumpObject(root).join('\n'));
+					needle2Model = root;
+					root.scale.set(.1, .1, .1);
+					root.rotation.set(0,0,0);
+					root.position.set(10,0,0);
+					root.visible = false;
+				});
+
 				window.addEventListener('resize', onWindowResize, false)
 				
 				function onWindowResize() {
@@ -147,14 +222,121 @@
 					renderer.setSize(window.innerWidth, window.innerHeight)
 				}
 
+				function update()
+				{
+					mixer.update(clock.getDelta());
+					requestAnimationFrame(update)
+				}
+
 				function animate() {
+					//model.rotation.y += 0.1;
 					requestAnimationFrame(animate)
-					controls.update();
+					orbitcontrol.update();
+					TWEEN.update()
 					renderer.render(scene, camera)
 				}
-				animate()
+				animate();
 			}
-			//
+
+			function resizeRendererToDisplaySize(renderer) {
+				const canvas = renderer.domElement;
+				const width = canvas.clientWidth;
+				const height = canvas.clientHeight;
+				const needResize = canvas.width !== width || canvas.height !== height;
+				if (needResize) {
+				renderer.setSize(width, height, false);
+				}
+				return needResize;
+			}
+			let isTime = false;
+			let tempTime;
+			let timedelta = 0;
+			let isRebase = false;
+			function render(time) {
+				time *= 0.0002;  // convert to seconds
+				if (isRebase)
+				{
+					isRebase = false;
+					isTime = false;
+					timedelta = 0;
+					return;
+				}
+				//console.log(time);
+				/*if (resizeRendererToDisplaySize(renderer)) {
+					const canvas = renderer.domElement;
+					camera.aspect = canvas.clientWidth / canvas.clientHeight;
+					camera.updateProjectionMatrix();
+				}*/
+				//console.log(time);
+				if (!isOpenMainModel && mainmodel) {
+					mainmodel.rotation.y = time;
+				} 
+				else if (isOpenMainModel){
+					if (!isTime && timedelta < 2)
+					{
+						isTime = true;
+						tempTime = time;
+					}
+
+					if (isTime && timedelta > 2)
+					{
+						mainmodel.visible = false;
+						console.log("enable")
+						isTime = false;
+						document.getElementById("backButton").style.display = "block";
+						ingectionSyringeModel.visible = true;
+						needle1Model.visible = true;
+						needle2Model.visible = true;
+					}
+
+					if (mainmodel.visible) {
+						mainmodel.position.z = timedelta*10;
+						timedelta = time-tempTime;
+					}
+				}
+				
+				renderer.render(scene, camera);
+				
+				requestAnimationFrame(render);
+			}
+			requestAnimationFrame(render);
+
+			function InitUIClick()
+			{
+				let obj = document.getElementById("openPackageButton");
+				let backButton = document.getElementById("backButton");
+
+				obj.onclick = function(){
+					isOpenMainModel = true;
+					mainmodel.rotation.set(0,0,0);
+					mainmodel.position.set(0,0,0);
+					camera.position.set( 1, 4, - 3 );
+					orbitcontrol.enabled = false;
+					main_action.play();
+					obj.style.display = "none";
+					//backButton.style.display = "block";
+				}
+
+				backButton.onclick = function(){
+					isRebase = true;
+					isOpenMainModel = false;
+					mainmodel.rotation.set(0,0,0);
+					mainmodel.position.set(0,0,0);
+					camera.position.set( 1, 4, - 3 );
+					orbitcontrol.enabled = true;
+					main_action.stop();
+					mainmodel.visible = true;
+					backButton.style.display = "none";
+					obj.style.display = "block";
+					ingectionSyringeModel.visible = false;
+						needle1Model.visible = false;
+						needle2Model.visible = false;
+						requestAnimationFrame(render);
+				}
+			}
+
+			InitUIClick();
+			
         </script>
     </body>
 </html>
