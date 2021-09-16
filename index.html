@@ -52,14 +52,14 @@
 				const container = document.querySelector( '.container' );
 
 				camera = new THREE.PerspectiveCamera( 45, window.innerWidth / window.innerHeight, 1, 1000 );
-				camera.position.set( 1, 2, - 3 );
+				camera.position.set( 1, 4, - 3 );
 				camera.lookAt( 0, 1, 0 );
 
 				//clock = new THREE.Clock();
 
 				scene = new THREE.Scene();
-				scene.background = new THREE.Color( 0xa0a0a0 );
-				scene.fog = new THREE.Fog( 0xa0a0a0, 10, 50 );
+				scene.background = new THREE.Color("rgb(133,202,237)");
+				scene.fog = new THREE.Fog("rgb(133,202,237)", 10, 50 );
 
 				renderer = new THREE.WebGLRenderer( { antialias: true } );
 				renderer.setPixelRatio( window.devicePixelRatio );
@@ -90,10 +90,10 @@
 				// scene.add( new THREE.CameraHelper( dirLight.shadow.camera ) );
 
 				// ground
-				const mesh = new THREE.Mesh( new THREE.PlaneGeometry( 2000, 2000 ), new THREE.MeshPhongMaterial( { color: 0x999999, depthWrite: false } ) );
+				/*const mesh = new THREE.Mesh( new THREE.PlaneGeometry( 2000, 2000 ), new THREE.MeshPhongMaterial( { color: 0x999999, depthWrite: false } ) );
 				mesh.rotation.x = - Math.PI / 2;
 				mesh.receiveShadow = true;
-				scene.add( mesh );
+				scene.add( mesh );*/
 
 				/*const grid = new THREE.GridHelper( 2000, 20, 0x000000, 0x000000 );
 				grid.material.opacity = 0.2;
