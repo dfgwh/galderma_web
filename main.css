@@ -103,20 +103,20 @@ a, button, input, select {
 
 #openPackageButton {
 	position: absolute;
-	width: 461.59px;
-	height: 101.71px;
-	left: calc(50% - 230.8px);
-	bottom: 28px;
+	width: 230px;
+	height: 50px;
+	left: calc(50% - 115px);
+	bottom: 5px;
 	border: 2px solid #A7DFDE;
 	border-radius: 5px;
 }
 
 #backButton {
 	position: absolute;
-	width: 255px;
-	height: 105px;
-	left: 21px;
-	bottom: 28px;
+	width: 125px;
+	height: 50px;
+	left: 10px;
+	bottom: 5px;
 	border: 2px solid #A7DFDE;
 	box-sizing: border-box;
 	filter: drop-shadow(0px 4px 26px rgba(0, 0, 0, 0.04));
@@ -138,50 +138,50 @@ a, button, input, select {
 
 #openPackageButton .blockInButton span {
 	position: absolute;
-	width: 297px;
-	height: 57px;
-	left: 117.12px;
-	top: 17.5px;
+	width: 170px;
+	height: 40px;
+	right: 5px;
+	top: 5px;
 	
 	font-family: Segma;
 	font-style: normal;
 	font-weight: 600;
-	font-size: 42px;
-	line-height: 57px;
+	font-size: 21px;
+	line-height: 30px;
 	text-align: center;
 	color: #020828;
 }
 
 #openPackageButton .blockInButton img {
 	position: absolute;
-	left: 28.67px;
-	top: 26.25px;
-	bottom: 25.7px;
+	left: 10px;
+	height: 30px;
+	top: 5px;
+	/*bottom: 10px;
 	/*border: 6px solid #A7DFDE;
 	/*transform: rotate(-90deg);*/
 }
 
 #backButton .blockInButton span {
 	position: absolute;
-	left: 42.76%;
-	right: 17.65%;
+	/*left: 42.76%;*/
+	right: 5px;
 	top: 20.11%;
 	bottom: 25.64%;
 	font-family: Segma;
 	font-style: normal;
-	font-weight: 500;
-	font-size: 42px;
-	line-height: 57px;
+	font-weight: 600;
+	font-size: 21px;
+	line-height: 25px;
 	text-align: center;
 	color: #020828;
 }
 
 #backButton .blockInButton img {
 	position: absolute;
-	left: 35.44px;
-	right: 160.72px;
-	top: 32.41px;
-	bottom: 34.16px;
+	left: 10px;
+	height: 20px;
+	top: 10px;
 	/*border: 6px solid #A7DFDE;
 	/*transform: rotate(-90deg);*/
 }
