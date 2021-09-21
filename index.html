@@ -64,8 +64,8 @@
 
             let scene, renderer, camera, stats;
 			let model, skeleton, mixer, clock;
-			let orbitcontrol, box_action, manual_action;
-			let isBoxAnimate = false, isManualAnimate = false;
+			let orbitcontrol, box_action, manual_action, setinjector_action, setneedle1_action, setneedle2_action;
+			let isOpenPackageAnimate = false, isBoxAnimate = false, isManualAnimate = false;;
 			const crossFadeControls = [];
 
 			let idleAction, walkAction, runAction;
@@ -169,10 +169,20 @@
 
 						box_action = mixer.clipAction(clips[3]);
 						manual_action = mixer.clipAction(clips[1]);
+						setinjector_action = mixer.clipAction(clips[4]);
+						setneedle1_action = mixer.clipAction(clips[6]);
+						setneedle2_action = mixer.clipAction(clips[5]);
+						/*
+						//for old
+						box_action = mixer.clipAction(clips[6]);
+						manual_action = mixer.clipAction(clips[5]);
+						setinjector_action = mixer.clipAction(clips[1]);
+						setneedle1_action = mixer.clipAction(clips[4]);
+						setneedle2_action = mixer.clipAction(clips[0]);*/
 
 						root.traverse(function(child){
 							//console.log(child.name, "    ", child.animations);
-							if (child.name == "Box" /*|| child.name == "Form"*/)
+							if (child.name == "Box" && !box /*|| child.name == "Form"*/)
 							{
 								box = child;
 								//box.visible = false;
@@ -361,68 +371,30 @@
 					return lines;
 			}
 
-			function startBoxAnimationAction()
+			function startOpenPackageAnimation()
 			{
-				timer_delta = 6.6;
+				timer_delta = 6.6 + 1.6;
 				box_action.play();
 				isAnimate = true;
+				isOpenPackageAnimate = true;
 				isBoxAnimate = true;
-
 			}
+			
 
-			function endBoxAnimationAction()
+
+
+			function endOpenPackageAnimation()
 			{
-				box_action.stop();
-				isBoxAnimate = false;
-				box.visible = false;
-				startManualAction();
-			}
 
-			function startManualAction()
-			{
-				manual_action.reset()
-				manual_action.timeScale = 1;
-    			manual_action.setLoop(THREE.LoopOnce);
-				manual_action.clampWhenFinished = true;
-				timer_delta = 2.4;
-				manual_action.play();
-				isAnimate = true;
-				isManualAnimate = true;
-
-			}
-
-			function endManualAction()
-			{
-				manual_action.stop();
-				isManualAnimate = false;
-				manual.visible = false;
-				form.visible = false;
-				formcup.visible = false;
 				startSecondStep();
 			}
 
-			function startReversManualActions()
-			{
-				manual_action.paused = false;
-				manual_action.timeScale = -5;
-				manual_action.setLoop(THREE.LoopOnce);  
-				timer_delta = 2.4;    
-				manual_action.play();
-				isAnimate = true;
-				isManualAnimate = true;
-				formcup.visible = true;
-				form.visible = true;
-				manual.visible = true;
-			}
 
-			function endReverseManualActions()
-			{
-
-			}
 
 			function startSecondStep()
 			{
 				document.getElementById("backButton").style.display = "block";
+				document.getElementById("prepareButton").style.display = "block";
 			}
 
 			function startIngectorAction()
@@ -458,23 +430,57 @@
 				if (isTime)
 				{
 					timedelta = (time) - tempTime;
-					//console.log (timedelta);
+				}
+				//timedelta = (time)- tempTime;
 
-					if (isManualAnimate)
+				if (isAnimate&&isOpenPackageAnimate)
+				{
+					console.log(timedelta)
+					if (timedelta > 4.2 && isBoxAnimate && !isManualAnimate)
 					{
-						form.position.z += (isRebase?-1:1)*0.01;
+						manual_action.play();
+						console.log("start manual");
+						isManualAnimate = true;
+					}
+					if (timedelta > 6.6 && isBoxAnimate)
+					{
+						box_action.stop();
+						manual_action.stop();
+						console.log("end manual with box");
+						isBoxAnimate = false;
+						isManualAnimate = false;
+						manual.visible = false;
+						formcup.visible = false;
+						box.visible = false;
+						form.visible = false;
+
+						setinjector_action.play();
+						setneedle1_action.play();
+						setneedle2_action.play();
+					}
+
+					if (timedelta > timer_delta)
+					{
+						isAnimate = false;
+						isTime = false;
+						isOpenPackageAnimate = false;
+
+						setinjector_action.paused = true;
+						setneedle1_action.paused = true;
+						setneedle2_action.paused = true;
+
+						endOpenPackageAnimation();
 					}
 				}
-				timedelta = (time)- tempTime;
 
-				if (timedelta > timer_delta)
+				/*if (timedelta > timer_delta)
 				{
 					if (isAnimate)
 					{
 						isAnimate = false;
 						isTime = false;
 						//console.log(mixer.animate.name);
-						if (isBoxAnimate)
+						/*if (isBoxAnimate)
 						{
 								endBoxAnimationAction();
 								console.log("end box");
@@ -490,8 +496,8 @@
 							}
 
 							console.log("end manual");
-						}
-					}
+						}*/
+				/*	}
 				}
 
 		/*		if (isRebase)
@@ -551,9 +557,9 @@
 					isOpenMainModel = true;
 					mainmodel.rotation.set(0,0,0);
 					mainmodel.position.set(0,0,0);
-					camera.position.set( 1, 4, - 3 );
+					camera.position.set( 1, 1, - 3 );
 					orbitcontrol.enabled = false;
-					startBoxAnimationAction();
+					startOpenPackageAnimation();
 					obj.style.display = "none";
 					//backButton.style.display = "block";
 				}
@@ -582,7 +588,7 @@
 				e.preventDefault();
 				var mouseVector = new THREE.Vector3();
 
-				mouseVector.x = 2 * (e.clientX / renderer.domElement.clientWidth) - 1;
+				/*mouseVector.x = 2 * (e.clientX / renderer.domElement.clientWidth) - 1;
 				mouseVector.y = 1 - 2 * ( e.clientY / renderer.domElement.clientHeight );
 				var raycaster = projector.pickingRay( mouseVector.clone(), camera );
 				var intersects = raycaster.intersectObject( TARGET );
@@ -590,7 +596,7 @@
 					var intersection = intersects[ i ],
 					obj = intersection.object;
 					console.log("Intersected object", obj.name);
-				}
+				}*/
 			}
 
 			function initPostprocessing() {
