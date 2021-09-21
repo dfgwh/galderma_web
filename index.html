@@ -62,15 +62,12 @@
 			
 			import { BokehShader, BokehDepthShader } from './three/examples/jsm/shaders/BokehShader2.js';
 
-            let scene, renderer, camera, stats;
+            let scene, renderer, camera;
 			let model, skeleton, mixer, clock;
-			let orbitcontrol, box_action, manual_action, setinjector_action, setneedle1_action, setneedle2_action;
-			let isOpenPackageAnimate = false, isBoxAnimate = false, isManualAnimate = false;;
+			let orbitcontrol, box_action, manual_action, setinjector_action, setneedle1_action, setneedle2_action, prepareinjector_action, prepareneedle_action;
+			let isOpenPackageAnimate = false, isBoxAnimate = false, isManualAnimate = false, isPrepareNeedleAnimate = false, isPrepareInjectorAnimate = false, isPrepareAnimate = false;
 			const crossFadeControls = [];
 
-			let idleAction, walkAction, runAction;
-			let idleWeight, walkWeight, runWeight;
-			let actions, settings;
 			let isOpenMainModel = false;
 			let isAnimate = false;
 
@@ -100,7 +97,7 @@
 			const container = document.querySelector( '.container' );
 
 			init();
-			let mainmodel, ingectionSyringeModel, needle1Model, needle2Model, box, form, manual, formcup;
+			let mainmodel, ingectionSyringeModel, needle1Model, needle2Model, box, form, manual, formcup, plangerCap, needleCase, needleCap;
 			let timer_delta;
 
 			function init() {
@@ -172,6 +169,8 @@
 						setinjector_action = mixer.clipAction(clips[4]);
 						setneedle1_action = mixer.clipAction(clips[6]);
 						setneedle2_action = mixer.clipAction(clips[5]);
+						prepareinjector_action = mixer.clipAction(clips[2]);
+						prepareneedle_action = mixer.clipAction(clips[0]);
 						/*
 						//for old
 						box_action = mixer.clipAction(clips[6]);
@@ -188,6 +187,18 @@
 								//box.visible = false;
 							}
 
+							if (child.name == "Injector_t")
+							{
+								ingectionSyringeModel = child;
+							}
+							if (child.name == "Needle2_t")
+							{
+								needle2Model = child;
+							}
+							if (child.name == "Needle_t")
+							{
+								needle1Model = child;
+							}
 
                         	if (child.isMesh){
 
@@ -205,6 +216,20 @@
 								if (child.name == "FormCap")
 								{
 									formcup = child;
+								}
+								if (child.name == "plungerCap")
+								{
+									plangerCap = child;
+								}
+								
+								if (child.name == "NeedleCase")
+								{
+									needleCase = child;
+								}
+
+								if (child.name == "NeedleCap")
+								{
+									needleCap = child;
 								}
                     
 								if (child.name == "InjectorGlass" || child.name == "NeedleCap" || child.name == "NeedleCase" || child.name == "NeedleCase2Glass")
@@ -229,9 +254,6 @@
 							}
                     	});
 
-						//ingectionSyringeModel;
-						//needle1Model;
-						//needle2Model;
 
 						update();
 					},
@@ -242,41 +264,6 @@
 						console.log(error)
 					}
 				);
-
-				const gltfLoader = new GLTFLoader();
-
-				gltfLoader.load('models/Flamingo.glb', (gltf) => {
-					const root = gltf.scene;
-					scene.add(root);
-					console.log(dumpObject(root).join('\n'));
-					ingectionSyringeModel = root;
-					root.scale.set(.1, .1, .1);
-					root.rotation.set(0,0,0);
-					root.position.set(-10,0,0);
-					root.visible = false;
-				});
-				
-				gltfLoader.load('models/Horse.glb', (gltf) => {
-					const root = gltf.scene;
-					scene.add(root);
-					console.log(dumpObject(root).join('\n'));
-					needle1Model = root;
-					root.scale.set(.05, .05, .05);
-					root.rotation.set(0,0,0);
-					root.position.set(0,0,0);
-					root.visible = false;
-				});
-
-				gltfLoader.load('models/Parrot.glb', (gltf) => {
-					const root = gltf.scene;
-					scene.add(root);
-					console.log(dumpObject(root).join('\n'));
-					needle2Model = root;
-					root.scale.set(.1, .1, .1);
-					root.rotation.set(0,0,0);
-					root.position.set(10,0,0);
-					root.visible = false;
-				});
 
 				window.addEventListener('resize', onWindowResize, false)
 				
@@ -373,23 +360,42 @@
 
 			function startOpenPackageAnimation()
 			{
-				timer_delta = 6.6 + 1.6;
+				timer_delta = 6.625 + 1.666;
 				box_action.play();
 				isAnimate = true;
 				isOpenPackageAnimate = true;
 				isBoxAnimate = true;
 			}
 			
-
-
-
 			function endOpenPackageAnimation()
 			{
-
 				startSecondStep();
 			}
 
+			function startPrepareAnimation()
+			{
+				timer_delta = 2.499;
+				prepareneedle_action.play();
+				prepareinjector_action.play();
 
+				needle2Model.visible = false;
+				plangerCap.visible = false;
+				needleCase.visible = false;
+				needleCap.visible = false;
+
+				isAnimate = true;
+				isPrepareAnimate = true;
+				isPrepareInjectorAnimate = true;
+				isPrepareNeedleAnimate = true;
+
+				document.getElementById("prepareButton").style.display = "none";
+				document.getElementById("backButton").style.display = "none";
+			}
+
+			function endPrepareAnimation()
+			{
+				document.getElementById("backButton").style.display = "none";
+			}
 
 			function startSecondStep()
 			{
@@ -397,10 +403,6 @@
 				document.getElementById("prepareButton").style.display = "block";
 			}
 
-			function startIngectorAction()
-			{
-
-			}
 
 			function resizeRendererToDisplaySize(renderer) {
 				const canvas = renderer.domElement;
@@ -435,14 +437,14 @@
 
 				if (isAnimate&&isOpenPackageAnimate)
 				{
-					console.log(timedelta)
+					//console.log(timedelta)
 					if (timedelta > 4.2 && isBoxAnimate && !isManualAnimate)
 					{
 						manual_action.play();
 						console.log("start manual");
 						isManualAnimate = true;
 					}
-					if (timedelta > 6.6 && isBoxAnimate)
+					if (timedelta > 6.625 && isBoxAnimate)
 					{
 						box_action.stop();
 						manual_action.stop();
@@ -469,7 +471,32 @@
 						setneedle1_action.paused = true;
 						setneedle2_action.paused = true;
 
+						isBoxAnimate = false;
+
 						endOpenPackageAnimation();
+					}
+				}
+
+				if (isAnimate&&isPrepareAnimate)
+				{
+					//console.log(timedelta)
+					if (timedelta > 1.6 && isPrepareInjectorAnimate)
+					{
+						isPrepareInjectorAnimate = false;
+						prepareinjector_action.paused = true;
+						console.log("end moov injectro")
+					}
+
+					if (timedelta > timer_delta)
+					{
+						isAnimate = false;
+						isTime = false;
+						isPrepareAnimate = false;
+						isPrepareNeedleAnimate = false;
+
+						prepareneedle_action.paused = true;
+
+						//endOpenPackageAnimation();
 					}
 				}
 
@@ -552,6 +579,7 @@
 			{
 				let obj = document.getElementById("openPackageButton");
 				let backButton = document.getElementById("backButton");
+				let prepareButton = document.getElementById("prepareButton");
 
 				obj.onclick = function(){
 					isOpenMainModel = true;
@@ -581,6 +609,11 @@
 						requestAnimationFrame(render);*/
 					startReversManualActions();
 				}
+				prepareButton.onclick = function(){
+					startPrepareAnimation();
+				}
+
+
 			}
 
 			function onDocumentMouseDown(e)
@@ -621,13 +654,13 @@
 						RINGS: shaderSettings.rings,
 						SAMPLES: shaderSettings.samples
 					}
-			} );
+				} );
 
-postprocessing.quad = new THREE.Mesh( new THREE.PlaneGeometry( window.innerWidth, window.innerHeight ), postprocessing.materialBokeh );
-postprocessing.quad.position.z = - 500;
-postprocessing.scene.add( postprocessing.quad );
+				postprocessing.quad = new THREE.Mesh( new THREE.PlaneGeometry( window.innerWidth, window.innerHeight ), postprocessing.materialBokeh );
+				postprocessing.quad.position.z = - 500;
+				postprocessing.scene.add( postprocessing.quad );
 
-}
+			}
 			//initPostprocessing();
 			InitUIClick();
 			
