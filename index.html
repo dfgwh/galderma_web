@@ -27,6 +27,11 @@
         <script src = "js/main.js"></script>
 
 		<div class = "container">
+			<div id = "loaderPage">
+				<img src="images/GALDERMA_LOGO.svg">
+				<div id="progressBar" min="0" max="100"><div id="progress"></div></div>
+				<span>Loading...</span>
+			</div>
 			<div id = "openPackageButton" type = "button">
 				<div class = "blockInButton">
 					<img src="images/open_icon.svg">
@@ -111,6 +116,9 @@
 			let openPackageAnimationTime = 8.2;
 			let prepareAnimationTime = 2.499;
 
+			// ui
+
+			let progressBar;
 
 			// app field
 
@@ -136,6 +144,8 @@
 
 
 			function init() {
+
+				progressBar = document.getElementById("progress");
 
 				createScene();		
 				scene.add(cubeCamera)
@@ -238,11 +248,13 @@
 							}
                     	});
 
-
+						document.getElementById('loaderPage').style.display = "none";
+						document.getElementById('openPackageButton').style.display = "block";
 						update();
 					},
 					(xhr) => {
 						console.log((xhr.loaded / xhr.total) * 100 + '% loaded')
+						progressBar.style.width = ((xhr.loaded / xhr.total) * 100)  + "%";
 					},
 					(error) => {
 						console.log(error)
