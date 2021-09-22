@@ -51,13 +51,11 @@
 
 			import { OrbitControls } from './three/examples/jsm/controls/OrbitControls.js';
         	import { FBXLoader } from './three/examples/jsm/loaders/FBXLoader.js';
-			//import { GLTFLoader } from './three/examples/jsm/loaders/GLTFLoader.js';
 			import { TWEEN } from './three/examples/jsm/libs/tween.module.min.js';
 			import { Reflector } from './three/examples/jsm/objects/Reflector.js';
 			import { CSS2DRenderer, CSS2DObject } from './three/examples/jsm/renderers/CSS2DRenderer.js';
 			import { Refractor } from './three/examples/jsm/objects/Refractor.js';
 			import { WaterRefractionShader } from './three/examples/jsm/shaders/WaterRefractionShader.js';
-			//import { BokehShader, BokehDepthShader } from './three/examples/jsm/shaders/BokehShader2.js';
 
 			// scene field
 
@@ -100,16 +98,15 @@
 			// animation field
 
 			let skeleton, mixer, clock;
-			let box_action, manual_action, setinjector_action, setneedle1_action, 
-				setneedle2_action, prepareinjector_action, prepareneedle_action;
-			let isOpenPackageAnimate = false, isBoxAnimate = false, isManualAnimate = false, 
-				isPrepareNeedleAnimate = false, isPrepareInjectorAnimate = false, isPrepareAnimate = false,
-				isOpenMainModel = false, isAnimate = false;
+			let scene_action;
+			let isOpenPackageAnimate = false, isPrepareAnimate = false, isAnimate = false;
 			let timer_delta;
 			let isTime = false;
 			let tempTime;
 			let timedelta = 0;
 			let isRebase = false;
+			let openPackageAnimationTime = 8.2;
+			let prepareAnimationTime = 2.499;
 
 
 			// app field
@@ -151,13 +148,13 @@
 						console.log(clips);
 
 
-						let scene_action = mixer.clipAction(clips[0]);
-						scene_action.play();
+						scene_action = mixer.clipAction(clips[0]);
+						//scene_action.play();
 
 						root.traverse(function(child){
 							mesh.push(child);
 							//console.log(child.name, "    ", child.animations);
-							if (child.name == "Box" && !box /*|| child.name == "Form"*/)
+							if (child.name == "Box"  /*|| child.name == "Form"*/)
 							{
 								box = child;
 								//box.visible = false;
@@ -350,37 +347,17 @@
 
 			function startOpenPackageAnimation()
 			{
-				timer_delta = 6.6 + 1.6;
+				timer_delta = openPackageAnimationTime;
 
-				box_action.reset()
-				box_action.timeScale = 1;
-				box_action.setLoop(THREE.LoopOnce);
-				box_action.clampWhenFinished = true;
+				scene_action.reset()
+				scene_action.timeScale = 1;
+				scene_action.setLoop(THREE.LoopOnce);
+				scene_action.clampWhenFinished = true;
 
-				manual_action.reset()
-				manual_action.timeScale = 1;
-				manual_action.setLoop(THREE.LoopOnce);
-				manual_action.clampWhenFinished = true;
-
-				setinjector_action.reset()
-				setinjector_action.timeScale = 1;
-				setinjector_action.setLoop(THREE.LoopOnce);
-				setinjector_action.clampWhenFinished = true;
-
-				setneedle1_action.reset()
-				setneedle1_action.timeScale = 1;
-				setneedle1_action.setLoop(THREE.LoopOnce);
-				setneedle1_action.clampWhenFinished = true;
-
-				setneedle2_action.reset()
-				setneedle2_action.timeScale = 1;
-				setneedle2_action.setLoop(THREE.LoopOnce);
-				setneedle2_action.clampWhenFinished = true;
-
-				box_action.play();
+				scene_action.play();
 				isAnimate = true;
 				isOpenPackageAnimate = true;
-				isBoxAnimate = true;
+
 			}
 			
 			function endOpenPackageAnimation()
@@ -390,45 +367,28 @@
 
 			function reversOpenPackageAnimation()
 			{
-				timer_delta = 6.6 + 1.6;
-				box_action.paused = false;
-				box_action.timeScale = -1;
-				box_action.setLoop(THREE.LoopOnce);  
+				timer_delta = openPackageAnimationTime;//6.6 + 1.6;
 
-				manual_action.paused = false;
-				manual_action.timeScale = -1;
-				manual_action.setLoop(THREE.LoopOnce);  
+				scene_action.time = openPackageAnimationTime;
+				scene_action.paused = false;
+				scene_action.timeScale = -1;
+				scene_action.setLoop(THREE.LoopOnce);  
 
-				setinjector_action.paused = false;
-				setinjector_action.timeScale = -1;
-				setinjector_action.setLoop(THREE.LoopOnce);  
 
-				setneedle1_action.paused = false;
-				setneedle1_action.timeScale = -1;
-				setneedle1_action.setLoop(THREE.LoopOnce);  
-
-				setneedle2_action.paused = false;
-				setneedle2_action.timeScale = -1;
-				setneedle2_action.setLoop(THREE.LoopOnce);  
 
 				isAnimate = true;
 				isOpenPackageAnimate = true;
 				isRebase = true;
-				isBoxAnimate = false;
 
 				manual.visible = false;
 				formcup.visible = false;
 				box.visible = false;
 				form.visible = false;
-
-				setinjector_action.play();
-				setneedle1_action.play();
-				setneedle2_action.play();
 			}
 
 			function startPrepareAnimation()
 			{
-				timer_delta = 2.499;
+				/*timer_delta = 2.499;
 
 				prepareinjector_action.reset()
 				prepareinjector_action.timeScale = 1;
@@ -454,12 +414,12 @@
 				isPrepareNeedleAnimate = true;
 
 				document.getElementById("prepareButton").style.display = "none";
-				document.getElementById("backButton").style.display = "none";
+				document.getElementById("backButton").style.display = "none";*/
 			}
 
 			function reversPrepareAnimation()
 			{
-				timer_delta = 2.5;
+				/*timer_delta = 2.5;
 
 				prepareinjector_action.paused = false;
 				prepareinjector_action.timeScale = -1;
@@ -477,7 +437,7 @@
 				prepareneedle_action.play();
 
 				document.getElementById("prepareButton").style.display = "none";
-				document.getElementById("backButton").style.display = "none";
+				document.getElementById("backButton").style.display = "none";*/
 			}
 
 			function endReversPrepareAnimation()
@@ -538,61 +498,39 @@
 				{
 					if (isRebase)
 					{
-						if (timedelta > 1.6 && !isBoxAnimate)
+						
+						console.log(timedelta);
+						if (timedelta > 1.5 && !formcup.visible)
 						{
 							box.visible = true;
-							manual.visible = true;
-							isBoxAnimate = true;
-							isManualAnimate = true;
-							box_action.play();
-							manual_action.play();
-							console.log("start box and manual");
+							form.visible = true;
+							formcup.visible = true;
 						}
-
-						if (timedelta > 2.4 && isManualAnimate)
-						{
-							isManualAnimate = false;
-							manual_action.stop();
-							console.log("end of manual")
-						}
-
 						if (timedelta > timer_delta)
 						{
 							isAnimate = false;
 							isTime = false;
 							isOpenPackageAnimate = false;
+							isRebase = false;
 
-							box_action.stop();
-							manual_action.stop();
-
-							isBoxAnimate = false;
-
-							//endOpenPackageAnimation();
+							scene_action.paused = true;
+							orbitcontrol.enabled = true;
+							
+							document.getElementById("openPackageButton").style.display = "block";
 						}
 					}
 					else
 					{
-						if (timedelta > 4.2 && isBoxAnimate && !isManualAnimate)
+						if (timedelta > 3.6 && formcup.visible)
 						{
-							manual_action.play();
-							console.log("start manual");
-							isManualAnimate = true;
-						}
-						if (timedelta > 6.6 && isBoxAnimate)
-						{
-							box_action.stop();
-							manual_action.stop();
-							console.log("end manual with box");
-							isBoxAnimate = false;
-							isManualAnimate = false;
-							manual.visible = false;
-							formcup.visible = false;
-							box.visible = false;
 							form.visible = false;
+							formcup.visible = false;
+						}
 
-							setinjector_action.play();
-							setneedle1_action.play();
-							setneedle2_action.play();
+						if (timedelta > 6.625 && manual.visible)
+						{
+							box.visible = false;
+							manual.visible = false;
 						}
 
 						if (timedelta > timer_delta)
@@ -601,11 +539,7 @@
 							isTime = false;
 							isOpenPackageAnimate = false;
 
-							setinjector_action.paused = true;
-							setneedle1_action.paused = true;
-							setneedle2_action.paused = true;
-
-							isBoxAnimate = false;
+							scene_action.paused = true;
 
 							endOpenPackageAnimation();
 						}
@@ -675,7 +609,7 @@
 				let prepareButton = document.getElementById("prepareButton");
 
 				obj.onclick = function(){
-					isOpenMainModel = true;
+
 					mainmodel.rotation.set(0,0,0);
 					mainmodel.position.set(0,0,0);
 					camera.position.set( 1, 1, - 3 );
@@ -686,21 +620,6 @@
 				}
 
 				backButton.onclick = function(){
-					//isRebase = true;
-					/*isOpenMainModel = false;
-					mainmodel.rotation.set(0,0,0);
-					mainmodel.position.set(0,0,0);
-					camera.position.set( 1, 4, - 3 );
-					orbitcontrol.enabled = true;
-					//main_action.stop();
-					mainmodel.visible = true;
-					backButton.style.display = "none";
-					obj.style.display = "block";
-					ingectionSyringeModel.visible = false;
-						needle1Model.visible = false;
-						needle2Model.visible = false;
-						requestAnimationFrame(render);*/
-					//startReversManualActions();
 					if (stepindeex == '2')
 					{
 						isRebase = true;
@@ -709,6 +628,8 @@
 					if (stepindeex == '1')
 					{
 						isRebase = true;
+						backButton.style.display = "none";
+						prepareButton.style.display = "none";
 						reversOpenPackageAnimation();
 					}
 				}
