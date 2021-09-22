@@ -444,6 +444,7 @@
 			{
 				document.getElementById("backButton").style.display = "block";
 				stepindeex = 2;
+				orbitcontrol.enabled = true;
 			}
 
 			function startSecondStep()
@@ -586,7 +587,13 @@
 			}
 			requestAnimationFrame(render);
 
-			
+			function setMainDefaultPosition()
+			{
+				camera.position.set( 1, 1, - 5 );
+				mainmodel.rotation.set(0,0,0);
+				mainmodel.position.set(0,0,0);
+			}
+
 			function InitUIClick()
 			{
 				let obj = document.getElementById("openPackageButton");
@@ -595,9 +602,7 @@
 
 				obj.onclick = function(){
 
-					mainmodel.rotation.set(0,0,0);
-					mainmodel.position.set(0,0,0);
-					camera.position.set( 1, 1, - 3 );
+					setMainDefaultPosition();
 					orbitcontrol.enabled = false;
 					startOpenPackageAnimation();
 					obj.style.display = "none";
@@ -605,6 +610,9 @@
 				}
 
 				backButton.onclick = function(){
+					
+					setMainDefaultPosition();
+					orbitcontrol.enabled = false;
 					if (stepindeex == '2')
 					{
 						isRebase = true;
