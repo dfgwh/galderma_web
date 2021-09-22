@@ -50,6 +50,7 @@
 		<script type = "module">
 
 			import { OrbitControls } from './three/examples/jsm/controls/OrbitControls.js';
+			import { TransformControls } from './three/examples/jsm/controls/TransformControls.js'
         	import { FBXLoader } from './three/examples/jsm/loaders/FBXLoader.js';
 			import { TWEEN } from './three/examples/jsm/libs/tween.module.min.js';
 			import { Reflector } from './three/examples/jsm/objects/Reflector.js';
@@ -61,13 +62,14 @@
 
             let scene, renderer, camera, orbitcontrol;
 			let refractor;
+			let transformControls;
 
 			// model field
 
 			let model, mainmodel, ingectionSyringeModel, needle1Model, 
 				needle2Model, box, form, manual, formcup, 
 				plangerCap, needleCase, needleCap, selectedObject;
-			let basePos;
+			let basePos, baseRot;
 			const cubeRenderTarget = new THREE.WebGLCubeRenderTarget(2048)
 			const cubeCamera = new THREE.CubeCamera(0.1, 100, cubeRenderTarget)
 			const glassMaterial = new THREE.MeshPhysicalMaterial({
@@ -300,6 +302,11 @@
 				orbitcontrol.enableDamping = true;
 				orbitcontrol.minDistance = 20;
 				orbitcontrol.maxDistance = 55;
+
+				transformControls = new TransformControls(camera, renderer.domElement);
+				transformControls.enabled = false;
+				transformControls.setMode('rotate');
+				scene.add(transformControls);
 
 				const hemiLight = new THREE.HemisphereLight( 0xffffff, 0x444444 );
 				hemiLight.position.set( 0, 20, 0 );
@@ -633,6 +640,11 @@
 					if (stepindeex == '3' || stepindeex == '4' || stepindeex == '5')
 					{
 						backButton.style.display = "none";
+						transformControls.enabled = false;
+						transformControls.visible = false;
+						selectedObject.rotation.x = baseRot.x;
+						selectedObject.rotation.y = baseRot.y;
+						selectedObject.rotation.z = baseRot.z;
 						animateVector3(selectedObject.position, basePos, {
 							duration: 2000, 
 							easing : TWEEN.Easing.Quadratic.InOut,
@@ -713,12 +725,16 @@
 
 				refractor.visible = true;
 				console.log(obj.rotation);
-				var target = (stepindeex=='5')?(new THREE.Vector3(0, 0, -0.1)):(new THREE.Vector3(0, 0.05, 0));
+				var target = (stepindeex=='5')?(new THREE.Vector3(0, 0, -0.1)):(new THREE.Vector3(0, 0.1, 0));
 				console.log(obj.position);
 				basePos = new THREE.Vector3();
 				basePos.x = obj.position.x;
 				basePos.y = obj.position.y;
 				basePos.z = obj.position.z;
+				baseRot = new THREE.Vector3();
+				baseRot.x = obj.rotation.x;
+				baseRot.y = obj.rotation.y;
+				baseRot.z = obj.rotation.z;
 				selectedObject = obj;
 				animateVector3(selectedObject.position, target, {
 					duration: 2000, 
@@ -729,6 +745,10 @@
 					callback : function(){
 						console.log("Completed");
 						document.getElementById("backButton").style.display = "block";
+						transformControls.attach(selectedObject);
+						transformControls.enabled = true;
+						transformControls.visible = true;
+
 					}
 				});
 			}
@@ -775,14 +795,14 @@
 			
 			window.addEventListener('mousemove', (e) => {
 				//console.log(e);
-				if (isMouseDown && (stepindeex == '3' || stepindeex == '4' || stepindeex == '5'))
+				/*if (isMouseDown && (stepindeex == '3' || stepindeex == '4' || stepindeex == '5'))
 				{
 					mouse.position.x = e.screenX;
 					mouse.position.y = e.screenY;
 					mouse.speed.x = e.movementX;
 					mouse.speed.y = e.movementY;
 					moove(mouse);
-				}
+				}*/
 			});
 
 			function moove(mouse) {
