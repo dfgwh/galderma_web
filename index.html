@@ -820,7 +820,7 @@
 
 			//var src = document.getElementById("source");
 
-			document.addEventListener('touchstart', function(e) {
+			/*document.addEventListener('touchstart', function(e) {
 				// Iterate through the touch points and log each screenX/Y coordinate.
 				// The unit of each coordinate is CSS pixels.
 				var i;
@@ -828,13 +828,14 @@
 					console.log("touchpoint[" + i + "].screenX = " + e.touches[i].screenX);
 					console.log("touchpoint[" + i + "].screenY = " + e.touches[i].screenY);
 				}
-			}, false);
+			}, false);*/
 
 			var el = document.getElementById("canvas");
 			container.addEventListener("touchstart", function(e) {
 				//isMouseDown = true;
-				my_touch.start_position.x = e.touches[0].position.x;
-				my_touch.start_position.y = e.touches[0].position.y;
+				console.log("start touch")
+				my_touch.start_position.x = e.touches[0].pageX;
+				my_touch.start_position.y = e.touches[0].pageY;
 			}, false);
 			container.addEventListener("touchend", function(e) {
 				//isMouseDown = false;
@@ -843,24 +844,57 @@
 				//isMouseDown = false;
 			}, false);
 			container.addEventListener("touchmove", function(e) {
-				//if (isMouseDown)
-				//{
+				if (stepindeex == '3' || stepindeex == '4' || stepindeex == '5')
+				{
 					my_touch.position.x = e.touches[0].pageX;
 					my_touch.position.y = e.touches[0].pageY;
+					console.log(my_touch.start_position," ",my_touch.position);
 					moove_mobile(my_touch);
-				//}
+					//handleMove(e);
+				}
 			}, false);
 
 			function moove_mobile(touch){
-				if (touch.position.x > touch.start_position)
+				if (touch.position.x > touch.start_position.x)
 				{
-					selectedObject.rotation.y += 0.5
+					selectedObject.rotation.y += 0.1
 				}
-				else if (touch.position.x < touch.start_position)
+				else if (touch.position.x < touch.start_position.x)
 				{
-					selectedObject.rotation.y -= 0.5
+					selectedObject.rotation.y -= 0.1
 				}
+				touch.start_position.x = touch.position.x;
+				touch.start_position.y = touch.position.y;
 			}
+
+			function handleMove(evt) {
+				evt.preventDefault();
+				var el = document.getElementById("canvas");
+				var ctx = el.getContext("2d");
+				var touches = evt.changedTouches;
+
+				for (var i = 0; i < touches.length; i++) {
+					var color = colorForTouch(touches[i]);
+					var idx = ongoingTouchIndexById(touches[i].identifier);
+
+					if (idx >= 0) {
+					console.log("continuing touch "+idx);
+					ctx.beginPath();
+					console.log("ctx.moveTo(" + ongoingTouches[idx].pageX + ", " + ongoingTouches[idx].pageY + ");");
+					ctx.moveTo(ongoingTouches[idx].pageX, ongoingTouches[idx].pageY);
+					console.log("ctx.lineTo(" + touches[i].pageX + ", " + touches[i].pageY + ");");
+					ctx.lineTo(touches[i].pageX, touches[i].pageY);
+					ctx.lineWidth = 4;
+					ctx.strokeStyle = color;
+					ctx.stroke();
+
+					ongoingTouches.splice(idx, 1, copyTouch(touches[i]));  // swap in the new touch record
+					console.log(".");
+					} else {
+					console.log("can't figure out which touch to continue");
+					}
+				}
+				}
 
 			InitUIClick();
 			
