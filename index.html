@@ -117,6 +117,11 @@
 			let height = window.innerHeight;
 			var mesh = [];
 			let stepindeex = 0;
+			let mouse = {
+				'position' : {'x' : 0, 'y' : 0},
+				'speed' : {'x' : 0, 'y' : 0}
+			};
+			let isMouseDown = false;
 
 
 
@@ -125,7 +130,7 @@
 
 
 			function init() {
-				
+
 				createScene();		
 				scene.add(cubeCamera)
 
@@ -650,7 +655,7 @@
 			}
 
 
-	document.addEventListener('click', onDocumentMouseDown, false);
+			document.addEventListener('click', onDocumentMouseDown, false);
 	
 			function onDocumentMouseDown(event) {
 				// Click on the screen to create a vector
@@ -752,6 +757,42 @@
 				return tweenVector3;
 			}
 
+			window.addEventListener('contextmenu', (e) => {
+				e.preventDefault();
+			})
+
+			window.addEventListener('mousedown', (e) => {
+				e.preventDefault();
+				isMouseDown = true;
+				//console.log(e);
+			});
+
+			window.addEventListener('mouseup', (e) => {
+				e.preventDefault();
+				isMouseDown = false;
+				//console.log(e);
+			});
+			
+			window.addEventListener('mousemove', (e) => {
+				//console.log(e);
+				if (isMouseDown && (stepindeex == '3' || stepindeex == '4' || stepindeex == '5'))
+				{
+					mouse.position.x = e.screenX;
+					mouse.position.y = e.screenY;
+					mouse.speed.x = e.movementX;
+					mouse.speed.y = e.movementY;
+					moove(mouse);
+				}
+			});
+
+			function moove(mouse) {
+				if (selectedObject)
+				{
+					//selectedObject.rotateY(-mouse.speed.y * 0.005);
+					//selectedObject.rotateZ(-mouse.speed.x * 0.005);
+					selectedObject.rotateX(mouse.speed.x * 0.005);
+				}
+			}
 			InitUIClick();
 			
         </script>
