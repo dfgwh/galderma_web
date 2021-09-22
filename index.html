@@ -59,7 +59,8 @@
 			import { BokehPass } from './three/examples/jsm/postprocessing/BokehPass.js';
 			import { Reflector } from './three/examples/jsm/objects/Reflector.js';
 			import { CSS2DRenderer, CSS2DObject } from './three/examples/jsm/renderers/CSS2DRenderer.js';
-			
+			import { Refractor } from './three/examples/jsm/objects/Refractor.js';
+			import { WaterRefractionShader } from './three/examples/jsm/shaders/WaterRefractionShader.js';
 			import { BokehShader, BokehDepthShader } from './three/examples/jsm/shaders/BokehShader2.js';
 
             let scene, renderer, camera;
@@ -67,6 +68,8 @@
 			let orbitcontrol, box_action, manual_action, setinjector_action, setneedle1_action, setneedle2_action, prepareinjector_action, prepareneedle_action;
 			let isOpenPackageAnimate = false, isBoxAnimate = false, isManualAnimate = false, isPrepareNeedleAnimate = false, isPrepareInjectorAnimate = false, isPrepareAnimate = false;
 			const crossFadeControls = [];
+
+			let refractor;
 
 			let isOpenMainModel = false;
 			let isAnimate = false;
@@ -76,6 +79,8 @@
 
 			let width = window.innerWidth;
 			let height = window.innerHeight;
+
+			var mesh = [];
 
 			let stepindeex = 0;
 
@@ -104,6 +109,8 @@
 
 			function init() {
 				createScene();
+
+
 
 				const depthShader = BokehDepthShader;
 
@@ -182,11 +189,13 @@
 						setneedle2_action = mixer.clipAction(clips[0]);*/
 
 						root.traverse(function(child){
+							mesh.push(child);
 							//console.log(child.name, "    ", child.animations);
 							if (child.name == "Box" && !box /*|| child.name == "Form"*/)
 							{
 								box = child;
 								//box.visible = false;
+								//box = null;
 							}
 
 							if (child.name == "Injector_t")
@@ -267,6 +276,47 @@
 					}
 				);
 
+				/*fbxLoader.load(
+					'models/Restlane_old.fbx',
+					(root) => {
+						root.scale.set(60, 60, 60)
+						scene.add(root);
+						console.log(dumpObject(root).join('\n'));
+						let skeleton1 = new THREE.SkeletonHelper( root );
+						skeleton1.visible = false;
+						scene.add( skeleton1 );
+
+						const clips = root.animations;
+						let mixer1 = new THREE.AnimationMixer( root );
+						console.log(clips);
+
+
+						box_action = mixer1.clipAction(clips[6]);
+
+						root.traverse(function(child){
+							//child.visible = false;
+							if (child.name == "Box" || child.name == "")
+							{
+								box = child;
+								console.log("box00");
+								child.visible = true;
+							}
+							
+								console.log(child.name);
+							
+                    	});
+
+
+						update();
+					},
+					(xhr) => {
+						console.log((xhr.loaded / xhr.total) * 100 + '% loaded')
+					},
+					(error) => {
+						console.log(error)
+					}
+				);*/
+
 				window.addEventListener('resize', onWindowResize, false)
 				
 				function onWindowResize() {
@@ -345,6 +395,22 @@
 				mesh.position.y = -20;
 				mesh.receiveShadow = true;
 				scene.add( mesh );
+
+				const refractorGeometry = new THREE.PlaneGeometry( 2000, 2000 );
+
+				refractor = new Refractor( refractorGeometry, {
+					color: 0x999999,
+					textureWidth: 1024,
+					textureHeight: 1024,
+					shader: WaterRefractionShader
+				} );
+
+				refractor.position.set( 0, 0, -1 );
+				refractor.rotation.set(0, - Math.PI , 0);
+
+				scene.add( refractor );
+
+				refractor.visible = false;
 			}
 
 			// write object structer to console
@@ -363,6 +429,32 @@
 			function startOpenPackageAnimation()
 			{
 				timer_delta = 6.6 + 1.6;
+
+				box_action.reset()
+				box_action.timeScale = 1;
+				box_action.setLoop(THREE.LoopOnce);
+				box_action.clampWhenFinished = true;
+
+				manual_action.reset()
+				manual_action.timeScale = 1;
+				manual_action.setLoop(THREE.LoopOnce);
+				manual_action.clampWhenFinished = true;
+
+				setinjector_action.reset()
+				setinjector_action.timeScale = 1;
+				setinjector_action.setLoop(THREE.LoopOnce);
+				setinjector_action.clampWhenFinished = true;
+
+				setneedle1_action.reset()
+				setneedle1_action.timeScale = 1;
+				setneedle1_action.setLoop(THREE.LoopOnce);
+				setneedle1_action.clampWhenFinished = true;
+
+				setneedle2_action.reset()
+				setneedle2_action.timeScale = 1;
+				setneedle2_action.setLoop(THREE.LoopOnce);
+				setneedle2_action.clampWhenFinished = true;
+
 				box_action.play();
 				isAnimate = true;
 				isOpenPackageAnimate = true;
@@ -376,13 +468,40 @@
 
 			function reversOpenPackageAnimation()
 			{
-				prepareinjector_action.paused = false;
-				prepareinjector_action.timeScale = -1;
-				prepareinjector_action.setLoop(THREE.LoopOnce);  
+				timer_delta = 6.6 + 1.6;
+				box_action.paused = false;
+				box_action.timeScale = -1;
+				box_action.setLoop(THREE.LoopOnce);  
 
-				prepareneedle_action.paused = false;
-				prepareneedle_action.timeScale = -1;
-				prepareneedle_action.setLoop(THREE.LoopOnce);  
+				manual_action.paused = false;
+				manual_action.timeScale = -1;
+				manual_action.setLoop(THREE.LoopOnce);  
+
+				setinjector_action.paused = false;
+				setinjector_action.timeScale = -1;
+				setinjector_action.setLoop(THREE.LoopOnce);  
+
+				setneedle1_action.paused = false;
+				setneedle1_action.timeScale = -1;
+				setneedle1_action.setLoop(THREE.LoopOnce);  
+
+				setneedle2_action.paused = false;
+				setneedle2_action.timeScale = -1;
+				setneedle2_action.setLoop(THREE.LoopOnce);  
+
+				isAnimate = true;
+				isOpenPackageAnimate = true;
+				isRebase = true;
+				isBoxAnimate = false;
+
+				manual.visible = false;
+				formcup.visible = false;
+				box.visible = false;
+				form.visible = false;
+
+				setinjector_action.play();
+				setneedle1_action.play();
+				setneedle2_action.play();
 			}
 
 			function startPrepareAnimation()
@@ -498,43 +617,79 @@
 
 				if (isAnimate&&isOpenPackageAnimate)
 				{
-					//console.log(timedelta)
-					if (timedelta > 4.2 && isBoxAnimate && !isManualAnimate)
+					if (isRebase)
 					{
-						manual_action.play();
-						console.log("start manual");
-						isManualAnimate = true;
+						if (timedelta > 1.6 && !isBoxAnimate)
+						{
+							box.visible = true;
+							manual.visible = true;
+							isBoxAnimate = true;
+							isManualAnimate = true;
+							box_action.play();
+							manual_action.play();
+							console.log("start box and manual");
+						}
+
+						if (timedelta > 2.4 && isManualAnimate)
+						{
+							isManualAnimate = false;
+							manual_action.stop();
+							console.log("end of manual")
+						}
+
+						if (timedelta > timer_delta)
+						{
+							isAnimate = false;
+							isTime = false;
+							isOpenPackageAnimate = false;
+
+							box_action.stop();
+							manual_action.stop();
+
+							isBoxAnimate = false;
+
+							//endOpenPackageAnimation();
+						}
 					}
-					if (timedelta > 6.6 && isBoxAnimate)
+					else
 					{
-						box_action.stop();
-						manual_action.stop();
-						console.log("end manual with box");
-						isBoxAnimate = false;
-						isManualAnimate = false;
-						manual.visible = false;
-						formcup.visible = false;
-						box.visible = false;
-						form.visible = false;
+						if (timedelta > 4.2 && isBoxAnimate && !isManualAnimate)
+						{
+							manual_action.play();
+							console.log("start manual");
+							isManualAnimate = true;
+						}
+						if (timedelta > 6.6 && isBoxAnimate)
+						{
+							box_action.stop();
+							manual_action.stop();
+							console.log("end manual with box");
+							isBoxAnimate = false;
+							isManualAnimate = false;
+							manual.visible = false;
+							formcup.visible = false;
+							box.visible = false;
+							form.visible = false;
 
-						setinjector_action.play();
-						setneedle1_action.play();
-						setneedle2_action.play();
-					}
+							setinjector_action.play();
+							setneedle1_action.play();
+							setneedle2_action.play();
+						}
 
-					if (timedelta > timer_delta)
-					{
-						isAnimate = false;
-						isTime = false;
-						isOpenPackageAnimate = false;
+						if (timedelta > timer_delta)
+						{
+							isAnimate = false;
+							isTime = false;
+							isOpenPackageAnimate = false;
 
-						setinjector_action.paused = true;
-						setneedle1_action.paused = true;
-						setneedle2_action.paused = true;
+							setinjector_action.paused = true;
+							setneedle1_action.paused = true;
+							setneedle2_action.paused = true;
 
-						isBoxAnimate = false;
+							isBoxAnimate = false;
 
-						endOpenPackageAnimation();
+							endOpenPackageAnimation();
+						}
 					}
 				}
 
@@ -558,7 +713,7 @@
 
 							prepareneedle_action.paused = true;
 							prepareinjector_action.paused = true;
-							console.log("mmm");
+							//console.log("mmm");
 
 							endReversPrepareAnimation();
 						}
@@ -632,6 +787,11 @@
 						isRebase = true;
 						reversPrepareAnimation();
 					}
+					if (stepindeex == '1')
+					{
+						isRebase = true;
+						reversOpenPackageAnimation();
+					}
 				}
 				prepareButton.onclick = function(){
 					startPrepareAnimation();
@@ -640,10 +800,60 @@
 
 			}
 
-			function onDocumentMouseDown(e)
+			/*function onDocumentMouseDown(e)
 			{
 				e.preventDefault();
 				var mouseVector = new THREE.Vector3();
+
+	 // Click on the screen to create a vector
+	 var vector = new THREE.Vector3((event.clientX / window.innerWidth) * 2 - 1, -(event.clientY / window
+		.innerHeight) * 2 + 1, 0.5);
+	 Vector = Vector.unproject (Camera); // convert the coordinates of the screen into the coordinate of the three-dimensional scene
+	var raycaster = new THREE.Raycaster(camera.position, vector.sub(camera.position).normalize());
+	var intersects = raycaster.intersectObjects(mesh, true);
+	if (intersects.length > 0) {
+		intersects[0].object.material.color.set("#ff0000");
+	}*/
+
+
+	document.addEventListener('click', onDocumentMouseDown, false);
+	
+			function onDocumentMouseDown(event) {
+				// Click on the screen to create a vector
+				var vector = new THREE.Vector3((event.clientX / window.innerWidth) * 2 - 1, -(event.clientY / window
+					.innerHeight) * 2 + 1, 0.5);
+					vector = vector.unproject (camera); // convert the coordinates of the screen into the coordinate of the three-dimensional scene
+				var raycaster = new THREE.Raycaster(camera.position, vector.sub(camera.position).normalize());
+				var intersects = raycaster.intersectObjects(mesh, true);
+
+				if (stepindeex)
+				{
+					if (intersects.length > 0) {
+						//intersects[0].object.material.color.set("#ff0000");
+						intersects.forEach(element => {
+							//console.log(element.object.name);
+							if (element.object.name == "Injector" ||
+							element.object.name == "InjectorGlass" ||
+							element.object.name == "plungerCap" ||
+							element.object.name == "InjectorPlunger")
+							{
+								console.log("injector");
+							}
+							if (element.object.name == "Needle" ||
+							element.object.name == "NeedleCase" ||
+							element.object.name == "NeedleCap")
+							{
+								console.log("needle1");
+							}
+							if (element.object.name == "NeedleCase2" ||
+							element.object.name == "NeedleCase2Glass")
+							{
+								console.log("needle2");
+							}
+						});
+					}
+				}	
+
 
 				/*mouseVector.x = 2 * (e.clientX / renderer.domElement.clientWidth) - 1;
 				mouseVector.y = 1 - 2 * ( e.clientY / renderer.domElement.clientHeight );
