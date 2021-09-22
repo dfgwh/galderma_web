@@ -388,20 +388,16 @@
 
 			function startPrepareAnimation()
 			{
-				/*timer_delta = 2.499;
+				timer_delta = prepareAnimationTime;
 
-				prepareinjector_action.reset()
-				prepareinjector_action.timeScale = 1;
-				prepareinjector_action.setLoop(THREE.LoopOnce);
-				prepareinjector_action.clampWhenFinished = true;
-			
-				prepareneedle_action.reset()
-				prepareneedle_action.timeScale = 1;
-				prepareneedle_action.setLoop(THREE.LoopOnce);
-				prepareneedle_action.clampWhenFinished = true;
+				//scene_action.reset()
+				scene_action.time = openPackageAnimationTime;
+				scene_action.timeScale = 1;
+				scene_action.setLoop(THREE.LoopOnce);
+				scene_action.clampWhenFinished = true;
+				
 
-				prepareneedle_action.play();
-				prepareinjector_action.play();
+				scene_action.paused = false;
 
 				needle2Model.visible = false;
 				plangerCap.visible = false;
@@ -410,34 +406,26 @@
 
 				isAnimate = true;
 				isPrepareAnimate = true;
-				isPrepareInjectorAnimate = true;
-				isPrepareNeedleAnimate = true;
 
 				document.getElementById("prepareButton").style.display = "none";
-				document.getElementById("backButton").style.display = "none";*/
+				document.getElementById("backButton").style.display = "none";
 			}
 
 			function reversPrepareAnimation()
 			{
-				/*timer_delta = 2.5;
+				timer_delta = prepareAnimationTime;
 
-				prepareinjector_action.paused = false;
-				prepareinjector_action.timeScale = -1;
-				prepareinjector_action.setLoop(THREE.LoopOnce);  
-
-				prepareneedle_action.paused = false;
-				prepareneedle_action.timeScale = -1;
-				prepareneedle_action.setLoop(THREE.LoopOnce);  
+				scene_action.paused = false;
+				scene_action.timeScale = -1;
+				scene_action.setLoop(THREE.LoopOnce); 
 
 				isAnimate = true;
 				isPrepareAnimate = true;
-				isPrepareInjectorAnimate = false;
-				isPrepareNeedleAnimate = true;
 
-				prepareneedle_action.play();
+				scene_action.paused=false;
 
-				document.getElementById("prepareButton").style.display = "none";
-				document.getElementById("backButton").style.display = "none";*/
+				//document.getElementById("prepareButton").style.display = "none";
+				document.getElementById("backButton").style.display = "none";
 			}
 
 			function endReversPrepareAnimation()
@@ -504,6 +492,7 @@
 						{
 							box.visible = true;
 							form.visible = true;
+							manual.visible = true
 							formcup.visible = true;
 						}
 						if (timedelta > timer_delta)
@@ -551,42 +540,38 @@
 					//console.log(timedelta)
 					if (isRebase)
 					{
-						if (timedelta > 0.89 && !isPrepareInjectorAnimate)
+						/*if (timedelta > 0.89 && !isPrepareInjectorAnimate)
 						{
 							isPrepareInjectorAnimate = true;
 							prepareinjector_action.play();
 							console.log("start moov injectro")
-						}
+						}*/
 						if (timedelta > timer_delta)
 						{
 							isAnimate = false;
 							isTime = false;
 							isPrepareAnimate = false;
-							isPrepareNeedleAnimate = false;
 
-							prepareneedle_action.paused = true;
-							prepareinjector_action.paused = true;
-							//console.log("mmm");
+							scene_action.paused = true;
 
 							endReversPrepareAnimation();
 						}
 					}
 					else{
 
-						if (timedelta > 1.6 && isPrepareInjectorAnimate)
+						/*if (timedelta > 1.6 && isPrepareInjectorAnimate)
 						{
 							isPrepareInjectorAnimate = false;
 							prepareinjector_action.paused = true;
 							console.log("end moov injectro")
-						}
+						}*/
 						if (timedelta > timer_delta)
 						{
 							isAnimate = false;
 							isTime = false;
 							isPrepareAnimate = false;
-							isPrepareNeedleAnimate = false;
 
-							prepareneedle_action.paused = true;
+							scene_action.paused = true;
 
 							endPrepareAnimation();
 						}
