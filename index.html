@@ -49,115 +49,93 @@
 
 		<script type = "module">
 
-			import { OrbitControls } from './three/examples/jsm/controls/OrbitControls.js'
-        	import { FBXLoader } from './three/examples/jsm/loaders/FBXLoader.js'
-			import { GLTFLoader } from './three/examples/jsm/loaders/GLTFLoader.js';
-			import { TWEEN } from './three/examples/jsm/libs/tween.module.min.js'
-			//import { FBXLoader } from 'FBXLoader.js';
-			import { EffectComposer } from './three/examples/jsm/postprocessing/EffectComposer.js';
-			import { RenderPass } from './three/examples/jsm/postprocessing/RenderPass.js';
-			import { BokehPass } from './three/examples/jsm/postprocessing/BokehPass.js';
+			import { OrbitControls } from './three/examples/jsm/controls/OrbitControls.js';
+        	import { FBXLoader } from './three/examples/jsm/loaders/FBXLoader.js';
+			//import { GLTFLoader } from './three/examples/jsm/loaders/GLTFLoader.js';
+			import { TWEEN } from './three/examples/jsm/libs/tween.module.min.js';
 			import { Reflector } from './three/examples/jsm/objects/Reflector.js';
 			import { CSS2DRenderer, CSS2DObject } from './three/examples/jsm/renderers/CSS2DRenderer.js';
 			import { Refractor } from './three/examples/jsm/objects/Refractor.js';
 			import { WaterRefractionShader } from './three/examples/jsm/shaders/WaterRefractionShader.js';
-			import { BokehShader, BokehDepthShader } from './three/examples/jsm/shaders/BokehShader2.js';
+			//import { BokehShader, BokehDepthShader } from './three/examples/jsm/shaders/BokehShader2.js';
 
-            let scene, renderer, camera;
-			let model, skeleton, mixer, clock;
-			let orbitcontrol, box_action, manual_action, setinjector_action, setneedle1_action, setneedle2_action, prepareinjector_action, prepareneedle_action;
-			let isOpenPackageAnimate = false, isBoxAnimate = false, isManualAnimate = false, isPrepareNeedleAnimate = false, isPrepareInjectorAnimate = false, isPrepareAnimate = false;
-			const crossFadeControls = [];
+			// scene field
 
+            let scene, renderer, camera, orbitcontrol;
 			let refractor;
 
-			let isOpenMainModel = false;
-			let isAnimate = false;
+			// model field
 
-			let singleStepMode = false;
-			let sizeOfNextStep = 0;
+			let model, mainmodel, ingectionSyringeModel, needle1Model, 
+				needle2Model, box, form, manual, formcup, 
+				plangerCap, needleCase, needleCap;
+			const cubeRenderTarget = new THREE.WebGLCubeRenderTarget(2048)
+			const cubeCamera = new THREE.CubeCamera(0.1, 100, cubeRenderTarget)
+			const glassMaterial = new THREE.MeshPhysicalMaterial({
+				metalness: 1.0,
+				roughness: 0.2,
+				envMap: cubeRenderTarget.texture,
+				refractionRatio: 0.95,
+				transparent: true,
+				opacity: 0.4,
+				transmission: 0.1,
+				side: THREE.FrontSide,
+				clearcoat: 1.0,
+				clearcoatRoughness: 0.39
+			});
 
+			const formMaterial = new THREE.MeshPhysicalMaterial({
+				metalness: 1.0,
+				roughness: 0.2,
+				envMap: cubeRenderTarget.texture,
+				refractionRatio: 0.95,
+				transparent: true,
+				opacity: 0.2,
+				transmission: 0.1,
+				side: THREE.FrontSide,
+				clearcoat: 1.0,
+				clearcoatRoughness: 0.39
+			});
+
+			// animation field
+
+			let skeleton, mixer, clock;
+			let box_action, manual_action, setinjector_action, setneedle1_action, 
+				setneedle2_action, prepareinjector_action, prepareneedle_action;
+			let isOpenPackageAnimate = false, isBoxAnimate = false, isManualAnimate = false, 
+				isPrepareNeedleAnimate = false, isPrepareInjectorAnimate = false, isPrepareAnimate = false,
+				isOpenMainModel = false, isAnimate = false;
+			let timer_delta;
+			let isTime = false;
+			let tempTime;
+			let timedelta = 0;
+			let isRebase = false;
+
+
+			// app field
+
+			const container = document.querySelector( '.container' );
 			let width = window.innerWidth;
 			let height = window.innerHeight;
-
 			var mesh = [];
-
 			let stepindeex = 0;
 
-			let materialDepth;
-			//const postprocessing = {};
-			let distance = 100;
-			let effectController;
 
-			const postprocessing = { enabled: true };
-
-			const shaderSettings = {
-				rings: 3,
-				samples: 4
-			};
-
-			const mouse = new THREE.Vector2();
-			const raycaster = new THREE.Raycaster();
-			const target = new THREE.Vector3( 0, 20, - 50 );
-			const planes = [];
-			const leaves = 100;
-			const container = document.querySelector( '.container' );
 
 			init();
-			let mainmodel, ingectionSyringeModel, needle1Model, needle2Model, box, form, manual, formcup, plangerCap, needleCase, needleCap;
-			let timer_delta;
+			
+
 
 			function init() {
 				createScene();
-
-
-
-				const depthShader = BokehDepthShader;
-
-				materialDepth = new THREE.ShaderMaterial( {
-					uniforms: depthShader.uniforms,
-					vertexShader: depthShader.vertexShader,
-					fragmentShader: depthShader.fragmentShader
-				} );
-
-				materialDepth.uniforms[ 'mNear' ].value = camera.near;
-				materialDepth.uniforms[ 'mFar' ].value = camera.far;
-
-
 				
-				const cubeRenderTarget = new THREE.WebGLCubeRenderTarget(2048)
-				const cubeCamera = new THREE.CubeCamera(0.1, 100, cubeRenderTarget)
 				scene.add(cubeCamera)
 
-				const glassMaterial = new THREE.MeshPhysicalMaterial({
-					metalness: 1.0,
-					roughness: 0.2,
-					envMap: cubeRenderTarget.texture,
-					refractionRatio: 0.95,
-					transparent: true,
-					opacity: 0.4,
-					transmission: 0.1,
-					side: THREE.FrontSide,
-					clearcoat: 1.0,
-					clearcoatRoughness: 0.39
-				})
 
-				const formMaterial = new THREE.MeshPhysicalMaterial({
-					metalness: 1.0,
-					roughness: 0.2,
-					envMap: cubeRenderTarget.texture,
-					refractionRatio: 0.95,
-					transparent: true,
-					opacity: 0.2,
-					transmission: 0.1,
-					side: THREE.FrontSide,
-					clearcoat: 1.0,
-					clearcoatRoughness: 0.39
-				})
 
 				const fbxLoader = new FBXLoader()
 				model = fbxLoader.load(
-					'models/Restlane.fbx',
+					'models/Restlane1.fbx',
 					(root) => {
 						root.scale.set(60, 60, 60)
 						scene.add(root);
@@ -173,20 +151,8 @@
 						console.log(clips);
 
 
-						box_action = mixer.clipAction(clips[3]);
-						manual_action = mixer.clipAction(clips[1]);
-						setinjector_action = mixer.clipAction(clips[4]);
-						setneedle1_action = mixer.clipAction(clips[6]);
-						setneedle2_action = mixer.clipAction(clips[5]);
-						prepareinjector_action = mixer.clipAction(clips[2]);
-						prepareneedle_action = mixer.clipAction(clips[0]);
-						/*
-						//for old
-						box_action = mixer.clipAction(clips[6]);
-						manual_action = mixer.clipAction(clips[5]);
-						setinjector_action = mixer.clipAction(clips[1]);
-						setneedle1_action = mixer.clipAction(clips[4]);
-						setneedle2_action = mixer.clipAction(clips[0]);*/
+						let scene_action = mixer.clipAction(clips[0]);
+						scene_action.play();
 
 						root.traverse(function(child){
 							mesh.push(child);
@@ -276,47 +242,6 @@
 					}
 				);
 
-				/*fbxLoader.load(
-					'models/Restlane_old.fbx',
-					(root) => {
-						root.scale.set(60, 60, 60)
-						scene.add(root);
-						console.log(dumpObject(root).join('\n'));
-						let skeleton1 = new THREE.SkeletonHelper( root );
-						skeleton1.visible = false;
-						scene.add( skeleton1 );
-
-						const clips = root.animations;
-						let mixer1 = new THREE.AnimationMixer( root );
-						console.log(clips);
-
-
-						box_action = mixer1.clipAction(clips[6]);
-
-						root.traverse(function(child){
-							//child.visible = false;
-							if (child.name == "Box" || child.name == "")
-							{
-								box = child;
-								console.log("box00");
-								child.visible = true;
-							}
-							
-								console.log(child.name);
-							
-                    	});
-
-
-						update();
-					},
-					(xhr) => {
-						console.log((xhr.loaded / xhr.total) * 100 + '% loaded')
-					},
-					(error) => {
-						console.log(error)
-					}
-				);*/
-
 				window.addEventListener('resize', onWindowResize, false)
 				
 				function onWindowResize() {
@@ -400,16 +325,13 @@
 
 				refractor = new Refractor( refractorGeometry, {
 					color: 0x999999,
-					textureWidth: 1024,
-					textureHeight: 1024,
+					textureWidth: 100,
+					textureHeight: 100,
 					shader: WaterRefractionShader
 				} );
-
 				refractor.position.set( 0, 0, -1 );
 				refractor.rotation.set(0, - Math.PI , 0);
-
 				scene.add( refractor );
-
 				refractor.visible = false;
 			}
 
@@ -596,10 +518,7 @@
 			}
 
 
-			let isTime = false;
-			let tempTime;
-			let timedelta = 0;
-			let isRebase = false;
+
 			function render(time) {
 				time *= 0.001;  // convert to seconds
 				if (isAnimate && !isTime)
@@ -800,21 +719,6 @@
 
 			}
 
-			/*function onDocumentMouseDown(e)
-			{
-				e.preventDefault();
-				var mouseVector = new THREE.Vector3();
-
-	 // Click on the screen to create a vector
-	 var vector = new THREE.Vector3((event.clientX / window.innerWidth) * 2 - 1, -(event.clientY / window
-		.innerHeight) * 2 + 1, 0.5);
-	 Vector = Vector.unproject (Camera); // convert the coordinates of the screen into the coordinate of the three-dimensional scene
-	var raycaster = new THREE.Raycaster(camera.position, vector.sub(camera.position).normalize());
-	var intersects = raycaster.intersectObjects(mesh, true);
-	if (intersects.length > 0) {
-		intersects[0].object.material.color.set("#ff0000");
-	}*/
-
 
 	document.addEventListener('click', onDocumentMouseDown, false);
 	
@@ -853,49 +757,8 @@
 						});
 					}
 				}	
-
-
-				/*mouseVector.x = 2 * (e.clientX / renderer.domElement.clientWidth) - 1;
-				mouseVector.y = 1 - 2 * ( e.clientY / renderer.domElement.clientHeight );
-				var raycaster = projector.pickingRay( mouseVector.clone(), camera );
-				var intersects = raycaster.intersectObject( TARGET );
-				for( var i = 0; i < intersects.length; i++ ) {
-					var intersection = intersects[ i ],
-					obj = intersection.object;
-					console.log("Intersected object", obj.name);
-				}*/
 			}
 
-			function initPostprocessing() {
-				postprocessing.scene = new THREE.Scene();
-				postprocessing.camera = new THREE.OrthographicCamera( window.innerWidth / - 2, window.innerWidth / 2, window.innerHeight / 2, window.innerHeight / - 2, - 10000, 10000 );
-				postprocessing.camera.position.z = 100;
-				postprocessing.scene.add( postprocessing.camera );
-				const pars = { minFilter: THREE.LinearFilter, magFilter: THREE.LinearFilter, format: THREE.RGBFormat };
-				postprocessing.rtTextureDepth = new THREE.WebGLRenderTarget( window.innerWidth, window.innerHeight, pars );
-				postprocessing.rtTextureColor = new THREE.WebGLRenderTarget( window.innerWidth, window.innerHeight, pars );
-				const bokeh_shader = BokehShader;
-				postprocessing.bokeh_uniforms = THREE.UniformsUtils.clone( bokeh_shader.uniforms );
-				postprocessing.bokeh_uniforms[ 'tColor' ].value = postprocessing.rtTextureColor.texture;
-				postprocessing.bokeh_uniforms[ 'tDepth' ].value = postprocessing.rtTextureDepth.texture;
-				postprocessing.bokeh_uniforms[ 'textureWidth' ].value = window.innerWidth;
-				postprocessing.bokeh_uniforms[ 'textureHeight' ].value = window.innerHeight;
-				postprocessing.materialBokeh = new THREE.ShaderMaterial( {
-					uniforms: postprocessing.bokeh_uniforms,
-					vertexShader: bokeh_shader.vertexShader,
-					fragmentShader: bokeh_shader.fragmentShader,
-					defines: {
-						RINGS: shaderSettings.rings,
-						SAMPLES: shaderSettings.samples
-					}
-				} );
-
-				postprocessing.quad = new THREE.Mesh( new THREE.PlaneGeometry( window.innerWidth, window.innerHeight ), postprocessing.materialBokeh );
-				postprocessing.quad.position.z = - 500;
-				postprocessing.scene.add( postprocessing.quad );
-
-			}
-			//initPostprocessing();
 			InitUIClick();
 			
         </script>
