@@ -66,7 +66,8 @@
 
 			let model, mainmodel, ingectionSyringeModel, needle1Model, 
 				needle2Model, box, form, manual, formcup, 
-				plangerCap, needleCase, needleCap;
+				plangerCap, needleCase, needleCap, selectedObject;
+			let basePos;
 			const cubeRenderTarget = new THREE.WebGLCubeRenderTarget(2048)
 			const cubeCamera = new THREE.CubeCamera(0.1, 100, cubeRenderTarget)
 			const glassMaterial = new THREE.MeshPhysicalMaterial({
@@ -124,11 +125,9 @@
 
 
 			function init() {
-				createScene();
 				
+				createScene();		
 				scene.add(cubeCamera)
-
-
 
 				const fbxLoader = new FBXLoader()
 				model = fbxLoader.load(
@@ -624,6 +623,23 @@
 						backButton.style.display = "none";
 						prepareButton.style.display = "none";
 						reversOpenPackageAnimation();
+						stepindeex = 0;
+					}
+					if (stepindeex == '3' || stepindeex == '4' || stepindeex == '5')
+					{
+						backButton.style.display = "none";
+						animateVector3(selectedObject.position, basePos, {
+							duration: 2000, 
+							easing : TWEEN.Easing.Quadratic.InOut,
+							update: function(d) {
+								console.log("Updating: " + d);
+							},
+							callback : function(){
+								console.log("Completed");
+								refractor.visible = false;
+								startSecondStep();
+							}
+						});
 					}
 				}
 				prepareButton.onclick = function(){
@@ -644,33 +660,96 @@
 				var raycaster = new THREE.Raycaster(camera.position, vector.sub(camera.position).normalize());
 				var intersects = raycaster.intersectObjects(mesh, true);
 
-				if (stepindeex)
+				if (stepindeex == '1')
 				{
 					if (intersects.length > 0) {
 						//intersects[0].object.material.color.set("#ff0000");
 						intersects.forEach(element => {
 							//console.log(element.object.name);
-							if (element.object.name == "Injector" ||
+							if ((element.object.name == "Injector" ||
 							element.object.name == "InjectorGlass" ||
 							element.object.name == "plungerCap" ||
 							element.object.name == "InjectorPlunger")
+							&&stepindeex=='1')
 							{
 								console.log("injector");
+								stepindeex = 3;
+								mooveSelectedObjAction(ingectionSyringeModel);
+								return;
 							}
-							if (element.object.name == "Needle" ||
+							if ((element.object.name == "Needle" ||
 							element.object.name == "NeedleCase" ||
 							element.object.name == "NeedleCap")
+							&&stepindeex=='1')
 							{
 								console.log("needle1");
+								stepindeex = 4;
+								mooveSelectedObjAction(needle1Model);
+								return;
 							}
-							if (element.object.name == "NeedleCase2" ||
+							if ((element.object.name == "NeedleCase2" ||
 							element.object.name == "NeedleCase2Glass")
+							&&stepindeex=='1')
 							{
 								console.log("needle2");
-							}
+								stepindeex = 5;
+								mooveSelectedObjAction(needle2Model);
+								return;
+							}	
 						});
 					}
 				}	
+			}
+
+			function mooveSelectedObjAction(obj)
+			{
+				document.getElementById("prepareButton").style.display = "none";
+				document.getElementById("backButton").style.display = "none";
+
+				refractor.visible = true;
+				console.log(obj.rotation);
+				var target = (stepindeex=='5')?(new THREE.Vector3(0, 0, -0.1)):(new THREE.Vector3(0, 0.05, 0));
+				console.log(obj.position);
+				basePos = new THREE.Vector3();
+				basePos.x = obj.position.x;
+				basePos.y = obj.position.y;
+				basePos.z = obj.position.z;
+				selectedObject = obj;
+				animateVector3(selectedObject.position, target, {
+					duration: 2000, 
+					easing : TWEEN.Easing.Quadratic.InOut,
+					update: function(d) {
+						console.log("Updating: " + d);
+					},
+					callback : function(){
+						console.log("Completed");
+						document.getElementById("backButton").style.display = "block";
+					}
+				});
+			}
+			function animateVector3(vectorToAnimate, target, options){
+				console.log(vectorToAnimate, " to ", target);
+				options = options || {};
+				// get targets from options or set to defaults
+				var to = target || THREE.Vector3(),
+					easing = options.easing || TWEEN.Easing.Quadratic.In,
+					duration = options.duration || 2000;
+				// create the tween
+				var tweenVector3 = new TWEEN.Tween(vectorToAnimate)
+					.to({ x: to.x, y: to.y, z: to.z, }, duration)
+					.easing(easing)
+					.onUpdate(function(d) {
+						if(options.update){ 
+							options.update(d);
+						}
+					})
+					.onComplete(function(){
+					if(options.callback) options.callback();
+					});
+				// start the tween
+				tweenVector3.start();
+				// return the tween in case we want to manipulate it later on
+				return tweenVector3;
 			}
 
 			InitUIClick();
