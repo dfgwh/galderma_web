@@ -5,7 +5,7 @@
 
 		<meta charset="UTF-8">
 		<meta http-equiv="X-UA-Compatible" content="IE=edge">
-		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1, user-scalable=no">
 		
         <link type="text/css" rel="stylesheet" href="main.css">
         
@@ -163,7 +163,7 @@
 
 				const fbxLoader = new FBXLoader()
 				model = fbxLoader.load(
-					'models/Restylane3.fbx',
+					'models/Restylane4.fbx',
 					(root) => {
 						root.scale.set(60, 60, 60)
 						scene.add(root);
@@ -175,6 +175,7 @@
 						scene.add( skeleton );
 
 						const clips = root.animations;
+						console.log(clips);
 						mixer = new THREE.AnimationMixer( root );
 						//console.log(clips);
 
@@ -185,7 +186,7 @@
 						root.traverse(function(child){
 							mesh.push(child);
 							//console.log(child.name, "    ", child.animations);
-							if (child.name == "Box"  && !box)//|| child.name == "Form"*/)
+							if (child.name == "Box" && !box)//|| child.name == "Form"*/)
 							{
 								box = child;
 								//box.visible = false;
@@ -658,7 +659,7 @@
 			{
 				//.position.set( 0, 1, - 5 );
 				animateVector3(camera.position, pos, {
-					duration: 200, 
+					duration: 1000, 
 					//easing : TWEEN.Easing.Quadratic.InOut,
 					update: function(d) {
 						console.log("Updating: " + d);
@@ -735,7 +736,7 @@
 						orbitcontrol.enabled = false;
 						setMainDefaultPosition(cameraTargetPosition, function() {
 							animateVector3(selectedObject.position, basePos, {
-								duration: 200, 
+								duration: 1000, 
 								//easing : TWEEN.Easing.Quadratic.InOut,
 								update: function(d) {
 									console.log("Updating: " + d);
@@ -844,7 +845,7 @@
 				baseRot.z = obj.rotation.z;
 				selectedObject = obj;
 				animateVector3(selectedObject.position, target, {
-					duration: 200, 
+					duration: 1000, 
 					//easing : TWEEN.Easing.Quadratic.InOut,
 					update: function(d) {
 						//console.log("Updating: " + d);
