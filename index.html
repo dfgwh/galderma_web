@@ -88,7 +88,7 @@
 			const cubeRenderTarget = new THREE.WebGLCubeRenderTarget(2048)
 			const cubeCamera = new THREE.CubeCamera(0.1, 100, cubeRenderTarget)
 			const glassMaterial = new THREE.MeshPhysicalMaterial({
-				metalness: 1.0,
+				metalness: 0.5,
 				roughness: 0.2,
 				envMap: cubeRenderTarget.texture,
 				refractionRatio: 0.95,
@@ -342,11 +342,16 @@
 				transformControls.setMode('rotate');
 				scene.add(transformControls);*/
 
+				const color = 0xFFFFFF;
+				const intensity = 0.5;
+				const light = new THREE.AmbientLight(color, intensity);
+				scene.add(light);
+
 				const hemiLight = new THREE.HemisphereLight( 0xffffff, 0x444444 );
 				hemiLight.position.set( 0, 20, 0 );
 				scene.add( hemiLight );
 				const dirLight = new THREE.DirectionalLight( 0xffffff );
-				dirLight.position.set( - 3, 10, - 10 );
+				dirLight.position.set( - 3, 10, - 20 );
 				dirLight.castShadow = true;
 				dirLight.shadow.camera.top = 2;
 				dirLight.shadow.camera.bottom = - 2;
