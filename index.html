@@ -291,7 +291,7 @@
 			function createScene()
 			{
 				camera = new THREE.PerspectiveCamera( 45, window.innerWidth / window.innerHeight, 1, 1000 );
-				camera.position.set( 1, 4, - 30 );
+				camera.position.set( 1, 4, - 5 );
 				camera.lookAt( 0, 1, 0 );
 
 				document.addEventListener('mousedown', onDocumentMouseDown, false);
@@ -316,7 +316,7 @@
 				orbitcontrol.enablePan = false;
 				orbitcontrol.dampingFactor = 0.1;
 				orbitcontrol.enableDamping = true;
-				orbitcontrol.minDistance = 20;
+				orbitcontrol.minDistance = 25;
 				orbitcontrol.maxDistance = 55;
 
 				/* = new TransformControls(camera, renderer.domElement);
@@ -616,7 +616,7 @@
 
 			function setMainDefaultPosition()
 			{
-				camera.position.set( 1, 4, - 30 );
+				camera.position.set( 1, 4, - 5 );
 				mainmodel.rotation.set(0,0,0);
 				mainmodel.position.set(0,0,0);
 			}
