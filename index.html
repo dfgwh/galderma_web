@@ -132,6 +132,7 @@
 
 			// app field
 
+			let isLoader = true;
 			const container = document.querySelector( '.container' );
 			let width = window.innerWidth;
 			let height = window.innerHeight;
@@ -162,7 +163,7 @@
 
 				const fbxLoader = new FBXLoader()
 				model = fbxLoader.load(
-					'models/Restlane1.fbx',
+					'models/Restylane3.fbx',
 					(root) => {
 						root.scale.set(60, 60, 60)
 						scene.add(root);
@@ -184,7 +185,7 @@
 						root.traverse(function(child){
 							mesh.push(child);
 							//console.log(child.name, "    ", child.animations);
-							if (child.name == "Box"  /*|| child.name == "Form"*/)
+							if (child.name == "Box"  && !box)//|| child.name == "Form"*/)
 							{
 								box = child;
 								//box.visible = false;
@@ -258,7 +259,6 @@
 							}
                     	});
 
-						document.getElementById('loaderPage').style.display = "none";
 						document.getElementById('openPackageButton').style.display = "block";
 						cameraBasePosition.x=camera.position.x;
 						cameraBasePosition.y=camera.position.y;
@@ -268,7 +268,7 @@
 					},
 					(xhr) => {
 						console.log((xhr.loaded / xhr.total) * 100 + '% loaded')
-						progressBar.style.width = ((xhr.loaded / xhr.total) * 100)  + "%";
+						progressBar.style.width = ((xhr.loaded / xhr.total) * 90)  + "%";
 					},
 					(error) => {
 						console.log(error)
@@ -292,10 +292,24 @@
 
 				function animate() {
 					//model.rotation.y += 0.1;
+					if (isLoader&&box)
+					{
+						if (box.material.map.image != null)
+						{
+							isLoader = false;
+							progressBar.style.width = 100 + "%";
+							console.log("switch");
+							document.getElementById('loaderPage').style.display = "none";
+						}
+
+					}
+
 					requestAnimationFrame(animate)
 					orbitcontrol.update();
 					TWEEN.update()
 					renderer.render(scene, camera)
+
+
 				}
 				animate();
 
@@ -343,14 +357,14 @@
 				scene.add(transformControls);*/
 
 				const color = 0xFFFFFF;
-				const intensity = 0.5;
+				const intensity = 1;
 				const light = new THREE.AmbientLight(color, intensity);
 				scene.add(light);
 
 				const hemiLight = new THREE.HemisphereLight( 0xffffff, 0x444444 );
 				hemiLight.position.set( 0, 20, 0 );
 				scene.add( hemiLight );
-				const dirLight = new THREE.DirectionalLight( 0xffffff );
+				/*const dirLight = new THREE.DirectionalLight( 0xffffff );
 				dirLight.position.set( - 3, 10, - 20 );
 				dirLight.castShadow = true;
 				dirLight.shadow.camera.top = 2;
@@ -359,7 +373,7 @@
 				dirLight.shadow.camera.right = 2;
 				dirLight.shadow.camera.near = 0.1;
 				dirLight.shadow.camera.far = 40;
-				scene.add( dirLight );
+				scene.add( dirLight );*/
 
 				// ground
 				const mesh = new THREE.Mesh( new THREE.PlaneGeometry( 2000, 2000 ), new THREE.MeshPhongMaterial( { color: 0x999999, depthWrite: false } ) );
@@ -521,6 +535,8 @@
 
 			function render(time) {
 				time *= 0.001;  // convert to seconds
+
+
 				if (isAnimate && !isTime)
 				{
 					isTime = true;
