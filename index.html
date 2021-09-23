@@ -846,17 +846,11 @@
 			}, false);*/
 
 			//var el = document.getElementById("canvas");
-			/*container.addEventListener("touchstart", function(e) {
+			container.addEventListener("touchstart", function(e) {
 				//isMouseDown = true;
 				//console.log("start touch")
 				my_touch.start_position.x = e.touches[0].pageX;
 				my_touch.start_position.y = e.touches[0].pageY;
-			}, false);
-			container.addEventListener("touchend", function(e) {
-				//isMouseDown = false;
-			}, false);
-			container.addEventListener("touchcancel", function(e) {
-				//isMouseDown = false;
 			}, false);
 			container.addEventListener("touchmove", function(e) {
 				if (stepindeex == '3' || stepindeex == '4' || stepindeex == '5')
@@ -867,7 +861,7 @@
 					moove_mobile(my_touch);
 					//handleMove(e);
 				}
-			}, false);*/
+			}, false);
 
 			function moove_mobile(touch){
 				if (touch.position.x > touch.start_position.x)
@@ -881,35 +875,6 @@
 				touch.start_position.x = touch.position.x;
 				touch.start_position.y = touch.position.y;
 			}
-
-			/*function handleMove(evt) {
-				evt.preventDefault();
-				var el = document.getElementById("canvas");
-				var ctx = el.getContext("2d");
-				var touches = evt.changedTouches;
-
-				for (var i = 0; i < touches.length; i++) {
-					var color = colorForTouch(touches[i]);
-					var idx = ongoingTouchIndexById(touches[i].identifier);
-
-					if (idx >= 0) {
-					//console.log("continuing touch "+idx);
-					ctx.beginPath();
-					//console.log("ctx.moveTo(" + ongoingTouches[idx].pageX + ", " + ongoingTouches[idx].pageY + ");");
-					ctx.moveTo(ongoingTouches[idx].pageX, ongoingTouches[idx].pageY);
-					//console.log("ctx.lineTo(" + touches[i].pageX + ", " + touches[i].pageY + ");");
-					ctx.lineTo(touches[i].pageX, touches[i].pageY);
-					ctx.lineWidth = 4;
-					ctx.strokeStyle = color;
-					ctx.stroke();
-
-					ongoingTouches.splice(idx, 1, copyTouch(touches[i]));  // swap in the new touch record
-					//console.log(".");
-					} else {
-					//console.log("can't figure out which touch to continue");
-					}
-				}
-				}*/
 
 			InitUIClick();
 			
