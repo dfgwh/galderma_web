@@ -50,6 +50,14 @@
 					<span>Prepare</span>
 				</div>
 			</div>
+			<div class="post_info" id="injector_info">
+				<span class="post_header">Injection<br>Syringe</span>
+				<img src="images/message_ing.svg"><span></span></img>
+			</div>
+			<div class="post_info" id="needle_info">
+				<span class="post_header">Needle</span>
+				<img src="images/message_needle.svg"><span></span></img>
+			</div>
 		</div>
 
 		<script type = "module">
@@ -659,6 +667,8 @@
 					if (stepindeex == '3' || stepindeex == '4' || stepindeex == '5')
 					{
 						backButton.style.display = "none";
+						document.getElementById("needle_info").style.display = "none";
+						document.getElementById("injector_info").style.display = "none";
 						//transformControls.enabled = false;
 						//transformControls.visible = false;
 						selectedObject.rotation.x = baseRot.x;
@@ -764,6 +774,12 @@
 					callback : function(){
 						//console.log("Completed");
 						document.getElementById("backButton").style.display = "block";
+						if (stepindeex=='3') {
+							document.getElementById("injector_info").style.display = "block";
+						}
+						else {
+							document.getElementById("needle_info").style.display = "block";
+						}
 						//transformControls.attach(selectedObject);
 						//transformControls.enabled = true;
 						//transformControls.visible = true;

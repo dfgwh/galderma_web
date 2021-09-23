@@ -8,11 +8,11 @@
 }
 body {
 	margin: 0;
-	background-color: rgb(167, 223, 222);
+	background-color: rgb(255, 255, 255);
 	color: #000;
 	overflow: hidden;
     font-size: .8em;
-    font-family: 'Fjalla One',sans-serif;
+    font-family: 'Segma',sans-serif;
 	line-height: 24px;
 	overscroll-behavior: none;
 }
@@ -31,65 +31,8 @@ button {
 	text-transform: uppercase;
 }
 
-#info {
-	position: absolute;
-	top: 0px;
-	width: 100%;
-	padding: 10px;
-	box-sizing: border-box;
-	text-align: center;
-	-moz-user-select: none;
-	-webkit-user-select: none;
-	-ms-user-select: none;
-	user-select: none;
-	pointer-events: none;
-	z-index: 1; /* TODO Solve this in HTML */
-}
-
 a, button, input, select {
 	pointer-events: auto;
-}
-
-.dg.ac {
-	-moz-user-select: none;
-	-webkit-user-select: none;
-	-ms-user-select: none;
-	user-select: none;
-	z-index: 2 !important; /* TODO Solve this in HTML */
-}
-
-#overlay {
-	position: absolute;
-	font-size: 16px;
-	z-index: 2;
-	top: 0;
-	left: 0;
-	width: 100%;
-	height: 100%;
-	display: flex;
-	align-items: center;
-	justify-content: center;
-	flex-direction: column;
-	background: rgba(0,0,0,0.7);
-}
-
-	#overlay button {
-		background: transparent;
-		border: 0;
-		border: 1px solid rgb(255, 255, 255);
-		border-radius: 4px;
-		color: #ffffff;
-		padding: 12px 18px;
-		text-transform: uppercase;
-		cursor: pointer;
-	}
-
-#notSupported {
-	width: 50%;
-	margin: auto;
-	background-color: #f00;
-	margin-top: 20px;
-	padding: 10px;
 }
 
 .button {
@@ -144,7 +87,7 @@ a, button, input, select {
 	right: 5px;
 	top: 5px;
 	
-	font-family: Segma;
+	/*font-family: Segma;*/
 	font-style: normal;
 	font-weight: 600;
 	font-size: 21px;
@@ -169,7 +112,7 @@ a, button, input, select {
 	right: 5px;
 	top: 20.11%;
 	bottom: 25.64%;
-	font-family: Segma;
+	/*font-family: Segma;*/
 	font-style: normal;
 	font-weight: 600;
 	font-size: 21px;
@@ -207,7 +150,7 @@ a, button, input, select {
 	right: 5px;
 	top: 20.11%;
 	bottom: 25.64%;
-	font-family: Segma;
+	/*font-family: Segma;*/
 	font-style: normal;
 	font-weight: 600;
 	font-size: 21px;
@@ -268,4 +211,22 @@ a, button, input, select {
 	width: 1%;
 	height: 100%;
 	background-color: #A7DFDE;
+}
+
+.post_info {
+	position: absolute;
+	opacity: 1;
+	width: 400px;
+	top: 20px;
+	left: 20px;
+	display: none;
+}
+.post_info img {
+	width: 300px;
+	top: 50px;
+	left: 0%;
+}
+.post_info span {
+	color: #FFFFFF;
+	font-size: 40px;
 }
