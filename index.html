@@ -842,8 +842,8 @@
 				}
 			}, false);*/
 
-			var el = document.getElementById("canvas");
-			container.addEventListener("touchstart", function(e) {
+			//var el = document.getElementById("canvas");
+			/*container.addEventListener("touchstart", function(e) {
 				//isMouseDown = true;
 				//console.log("start touch")
 				my_touch.start_position.x = e.touches[0].pageX;
@@ -864,7 +864,7 @@
 					moove_mobile(my_touch);
 					//handleMove(e);
 				}
-			}, false);
+			}, false);*/
 
 			function moove_mobile(touch){
 				if (touch.position.x > touch.start_position.x)
@@ -879,7 +879,7 @@
 				touch.start_position.y = touch.position.y;
 			}
 
-			function handleMove(evt) {
+			/*function handleMove(evt) {
 				evt.preventDefault();
 				var el = document.getElementById("canvas");
 				var ctx = el.getContext("2d");
@@ -906,7 +906,7 @@
 					//console.log("can't figure out which touch to continue");
 					}
 				}
-				}
+				}*/
 
 			InitUIClick();
 			
