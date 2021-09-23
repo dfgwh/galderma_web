@@ -659,7 +659,7 @@
 				//.position.set( 0, 1, - 5 );
 				animateVector3(camera.position, pos, {
 					duration: 200, 
-					easing : TWEEN.Easing.Quadratic.InOut,
+					//easing : TWEEN.Easing.Quadratic.InOut,
 					update: function(d) {
 						console.log("Updating: " + d);
 					},
@@ -735,8 +735,8 @@
 						orbitcontrol.enabled = false;
 						setMainDefaultPosition(cameraTargetPosition, function() {
 							animateVector3(selectedObject.position, basePos, {
-								duration: 5000, 
-								easing : TWEEN.Easing.Quadratic.InOut,
+								duration: 200, 
+								//easing : TWEEN.Easing.Quadratic.InOut,
 								update: function(d) {
 									console.log("Updating: " + d);
 								},
@@ -844,8 +844,8 @@
 				baseRot.z = obj.rotation.z;
 				selectedObject = obj;
 				animateVector3(selectedObject.position, target, {
-					duration: 2000, 
-					easing : TWEEN.Easing.Quadratic.InOut,
+					duration: 200, 
+					//easing : TWEEN.Easing.Quadratic.InOut,
 					update: function(d) {
 						//console.log("Updating: " + d);
 					},
