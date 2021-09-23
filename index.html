@@ -185,7 +185,6 @@
 
 						root.traverse(function(child){
 							mesh.push(child);
-							//console.log(child.name, "    ", child.animations);
 							if (child.name == "Box" && !box)//|| child.name == "Form"*/)
 							{
 								box = child;
@@ -350,23 +349,17 @@
 				orbitcontrol.minDistance = 20;
 				orbitcontrol.maxDistance = 55;
 
-				//camera.position.set(cameraBasePosition);
-
-				/* = new TransformControls(camera, renderer.domElement);
-				transformControls.enabled = false;
-				transformControls.setMode('rotate');
-				scene.add(transformControls);*/
-
-				const color = 0xFFFFFF;
+				/*const color = 0xFFFFFF;
 				const intensity = 1;
 				const light = new THREE.AmbientLight(color, intensity);
-				scene.add(light);
+				scene.add(light);*/
 
-				const hemiLight = new THREE.HemisphereLight( 0xffffff, 0x444444 );
-				hemiLight.position.set( 0, 20, 0 );
+				const hemiLight = new THREE.HemisphereLight( 0xB1E1FF, 0xffffff, 1.5 );
+				//hemiLight.position.set( 0, 20, 0 );
 				scene.add( hemiLight );
-				/*const dirLight = new THREE.DirectionalLight( 0xffffff );
-				dirLight.position.set( - 3, 10, - 20 );
+				const dirLight = new THREE.DirectionalLight( 0xffffff, 1.5);
+				dirLight.position.set( - 3, 10, - 10 );
+				dirLight.target.position.set(0, 0, 0);
 				dirLight.castShadow = true;
 				dirLight.shadow.camera.top = 2;
 				dirLight.shadow.camera.bottom = - 2;
@@ -374,7 +367,10 @@
 				dirLight.shadow.camera.right = 2;
 				dirLight.shadow.camera.near = 0.1;
 				dirLight.shadow.camera.far = 40;
-				scene.add( dirLight );*/
+				scene.add( dirLight );
+
+				//const helper = new THREE.DirectionalLightHelper(dirLight);
+				//scene.add(helper);
 
 				// ground
 				const mesh = new THREE.Mesh( new THREE.PlaneGeometry( 2000, 2000 ), new THREE.MeshPhongMaterial( { color: 0x999999, depthWrite: false } ) );
