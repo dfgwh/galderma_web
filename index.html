@@ -305,7 +305,7 @@
 			function createScene()
 			{
 				camera = new THREE.PerspectiveCamera( 45, window.innerWidth / window.innerHeight, 1, 1000 );
-				camera.position.set( -7, 4, - 25 );
+				camera.position.set( -20, 4, - 25 );
 				camera.lookAt( 0, 1, 0 );
 				cameraBasePosition = new THREE.Vector3();
 				cameraTargetPosition = new THREE.Vector3(3, 8, -25);
@@ -638,17 +638,19 @@
 			}
 			requestAnimationFrame(render);
 
-			function setMainDefaultPosition(pos)
+			function setMainDefaultPosition(pos, completeCallback)
 			{
 				//.position.set( 0, 1, - 5 );
 				animateVector3(camera.position, pos, {
-					duration: 6000, 
+					duration: 2000, 
 					easing : TWEEN.Easing.Quadratic.InOut,
 					update: function(d) {
 						console.log("Updating: " + d);
 					},
 					callback : function(){
 						console.log("Completed",camera.position);
+						if(completeCallback) completeCallback();
+						
 						/*document.getElementById("backButton").style.display = "block";
 						if (stepindeex=='3') {
 							document.getElementById("injector_info").style.display = "block";
@@ -675,10 +677,11 @@
 				obj.onclick = function(){
 
 					orbitcontrol.enabled = false;
-					setMainDefaultPosition(cameraBasePosition);
+					obj.style.display = "none";
+					setMainDefaultPosition(cameraBasePosition, startOpenPackageAnimation);
 					//camera.position.set( -7, 4, - 5 );
 					
-					startOpenPackageAnimation();
+					
 					obj.style.display = "none";
 					//backButton.style.display = "block";
 				}
@@ -690,16 +693,14 @@
 					if (stepindeex == '2')
 					{
 						isRebase = true;
-						setMainDefaultPosition(cameraTargetPosition);
-						reversPrepareAnimation();
+						setMainDefaultPosition(cameraTargetPosition, reversPrepareAnimation);
 					}
 					if (stepindeex == '1')
 					{
 						isRebase = true;
 						backButton.style.display = "none";
 						prepareButton.style.display = "none";
-						reversOpenPackageAnimation();
-						setMainDefaultPosition(cameraBasePosition);
+						setMainDefaultPosition(cameraBasePosition, reversOpenPackageAnimation);
 						//camera.position.set( -7, 4, - 5 );
 						stepindeex = 0;
 					}
