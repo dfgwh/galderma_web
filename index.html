@@ -392,8 +392,8 @@
 				} );
 				refractor.position.set( 0, 0, -1 );
 				refractor.rotation.set(0, - Math.PI , 0);
-				scene.add( refractor );
-				refractor.visible = false;
+				//scene.add( refractor );
+				//refractor.visible = false;
 			}
 
 			// write object structer to console
@@ -725,23 +725,33 @@
 						backButton.style.display = "none";
 						document.getElementById("needle_info").style.display = "none";
 						document.getElementById("injector_info").style.display = "none";
+				
+
 						//transformControls.enabled = false;
 						//transformControls.visible = false;
 						selectedObject.rotation.x = baseRot.x;
 						selectedObject.rotation.y = baseRot.y;
 						selectedObject.rotation.z = baseRot.z;
-						animateVector3(selectedObject.position, basePos, {
-							duration: 2000, 
-							easing : TWEEN.Easing.Quadratic.InOut,
-							update: function(d) {
-								console.log("Updating: " + d);
-							},
-							callback : function(){
-								console.log("Completed");
-								refractor.visible = false;
-								startSecondStep();
-							}
+						orbitcontrol.enabled = false;
+						setMainDefaultPosition(cameraTargetPosition, function() {
+							animateVector3(selectedObject.position, basePos, {
+								duration: 5000, 
+								easing : TWEEN.Easing.Quadratic.InOut,
+								update: function(d) {
+									console.log("Updating: " + d);
+								},
+								callback : function(){
+									console.log("Completed");
+									//refractor.visible = false;
+									orbitcontrol.enabled = false;
+									needle1Model.visible = true;
+									needle2Model.visible = true;	
+									ingectionSyringeModel.visible = true;
+									startSecondStep();
+								}
+							});
 						});
+
 					}
 				}
 				prepareButton.onclick = function(){
@@ -776,7 +786,11 @@
 							{
 								//console.log("injector");
 								stepindeex = 3;
-								mooveSelectedObjAction(ingectionSyringeModel);
+								needle1Model.visible = false;
+								needle2Model.visible = false;
+								mooveSelectedObjAction(ingectionSyringeModel, function(){
+									orbitcontrol.enabled = true;
+								});
 								return;
 							}
 							if ((element.object.name == "Needle" ||
@@ -786,7 +800,11 @@
 							{
 								//console.log("needle1");
 								stepindeex = 4;
-								mooveSelectedObjAction(needle1Model);
+								ingectionSyringeModel.visible = false;
+								needle2Model.visible = false;
+								mooveSelectedObjAction(needle1Model, function(){
+									orbitcontrol.enabled = true;
+								});
 								return;
 							}
 							if ((element.object.name == "NeedleCase2" ||
@@ -795,7 +813,11 @@
 							{
 								//console.log("needle2");
 								stepindeex = 5;
-								mooveSelectedObjAction(needle2Model);
+								ingectionSyringeModel.visible = false;
+								needle1Model.visible = false;
+								mooveSelectedObjAction(needle2Model, function(){
+									orbitcontrol.enabled = true;
+								});
 								return;
 							}	
 						});
@@ -803,14 +825,14 @@
 				}	
 			}
 
-			function mooveSelectedObjAction(obj)
+			function mooveSelectedObjAction(obj, Objcallback)
 			{
 				document.getElementById("prepareButton").style.display = "none";
 				document.getElementById("backButton").style.display = "none";
 
-				refractor.visible = true;
+				//refractor.visible = true;
 				//console.log(obj.rotation);
-				var target = (stepindeex=='5')?(new THREE.Vector3(0, 0, -0.1)):(new THREE.Vector3(0, 0.05, 0));
+				var target = (stepindeex=='5')?(new THREE.Vector3(0, 0, 0)):(new THREE.Vector3(0, 0, 0));
 				//console.log(obj.position);
 				basePos = new THREE.Vector3();
 				basePos.x = obj.position.x;
@@ -836,6 +858,8 @@
 						else {
 							document.getElementById("needle_info").style.display = "block";
 						}
+
+						if (Objcallback) Objcallback();
 						//transformControls.attach(selectedObject);
 						//transformControls.enabled = true;
 						//transformControls.visible = true;
@@ -867,7 +891,7 @@
 				// return the tween in case we want to manipulate it later on
 				return tweenVector3;
 			}
-
+/*
 			window.addEventListener('contextmenu', (e) => {
 				e.preventDefault();
 			})
@@ -918,7 +942,7 @@
 			}, false);*/
 
 			//var el = document.getElementById("canvas");
-			container.addEventListener("touchstart", function(e) {
+/*			container.addEventListener("touchstart", function(e) {
 				//isMouseDown = true;
 				//console.log("start touch")
 				my_touch.start_position.x = e.touches[0].pageX;
@@ -947,7 +971,7 @@
 				touch.start_position.x = touch.position.x;
 				touch.start_position.y = touch.position.y;
 			}
-
+*/
 			InitUIClick();
 			
         </script>
