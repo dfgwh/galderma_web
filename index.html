@@ -291,7 +291,7 @@
 			function createScene()
 			{
 				camera = new THREE.PerspectiveCamera( 45, window.innerWidth / window.innerHeight, 1, 1000 );
-				camera.position.set( 1, 4, - 5 );
+				camera.position.set( -7, 4, - 5 );
 				camera.lookAt( 0, 1, 0 );
 
 				document.addEventListener('mousedown', onDocumentMouseDown, false);
@@ -316,7 +316,7 @@
 				orbitcontrol.enablePan = false;
 				orbitcontrol.dampingFactor = 0.1;
 				orbitcontrol.enableDamping = true;
-				orbitcontrol.minDistance = 25;
+				orbitcontrol.minDistance = 20;
 				orbitcontrol.maxDistance = 55;
 
 				/* = new TransformControls(camera, renderer.domElement);
@@ -390,6 +390,7 @@
 			function endOpenPackageAnimation()
 			{
 				startSecondStep();
+				setMainDefaultPosition();
 			}
 
 			function reversOpenPackageAnimation()
@@ -616,7 +617,7 @@
 
 			function setMainDefaultPosition()
 			{
-				camera.position.set( 1, 4, - 5 );
+				camera.position.set( 0, 1, - 5 );
 				mainmodel.rotation.set(0,0,0);
 				mainmodel.position.set(0,0,0);
 			}
@@ -630,6 +631,7 @@
 				obj.onclick = function(){
 
 					setMainDefaultPosition();
+					camera.position.set( -7, 4, - 5 );
 					orbitcontrol.enabled = false;
 					startOpenPackageAnimation();
 					obj.style.display = "none";
@@ -651,6 +653,7 @@
 						backButton.style.display = "none";
 						prepareButton.style.display = "none";
 						reversOpenPackageAnimation();
+						camera.position.set( -7, 4, - 5 );
 						stepindeex = 0;
 					}
 					if (stepindeex == '3' || stepindeex == '4' || stepindeex == '5')
