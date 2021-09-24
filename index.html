@@ -65,6 +65,7 @@
 			import { OrbitControls } from './three/examples/jsm/controls/OrbitControls.js';
 			//import { TransformControls } from './three/examples/jsm/controls/TransformControls.js'
         	import { FBXLoader } from './three/examples/jsm/loaders/FBXLoader.js';
+			import {GLTFLoader} from './three/examples/jsm/loaders/GLTFLoader.js';
 			import { TWEEN } from './three/examples/jsm/libs/tween.module.min.js';
 			import { Reflector } from './three/examples/jsm/objects/Reflector.js';
 			import { CSS2DRenderer, CSS2DObject } from './three/examples/jsm/renderers/CSS2DRenderer.js';
@@ -83,8 +84,8 @@
 
 			let model, mainmodel, ingectionSyringeModel, needle1Model, 
 				needle2Model, box, form, manual, formcup, 
-				plangerCap, needleCase, needleCap, selectedObject;
-			let basePos, baseRot;
+				plangerCap, needleCase, needleCap, selectedObject, armatur;
+			let basePos, baseRot, baseBoxPos;
 			const cubeRenderTarget = new THREE.WebGLCubeRenderTarget(2048)
 			const cubeCamera = new THREE.CubeCamera(0.1, 100, cubeRenderTarget)
 			const glassMaterial = new THREE.MeshPhysicalMaterial({
@@ -125,6 +126,7 @@
 			let isRebase = false;
 			let openPackageAnimationTime = 8.2;
 			let prepareAnimationTime = 2.499;
+			let isBoxAnimation = false;
 
 			// ui
 
@@ -160,16 +162,15 @@
 
 				createScene();		
 				scene.add(cubeCamera)
-
+				const gltfLoader = new GLTFLoader();
 				const fbxLoader = new FBXLoader()
 				model = fbxLoader.load(
 					'models/Restylane4.fbx',
 					(root) => {
 						root.scale.set(60, 60, 60)
 						scene.add(root);
-						console.log(dumpObject(root).join('\n'));
 						mainmodel = root;
-
+						console.log(dumpObject(root).join('\n'));
 						skeleton = new THREE.SkeletonHelper( root );
 						skeleton.visible = false;
 						scene.add( skeleton );
@@ -177,19 +178,22 @@
 						const clips = root.animations;
 						console.log(clips);
 						mixer = new THREE.AnimationMixer( root );
-						//console.log(clips);
-
 
 						scene_action = mixer.clipAction(clips[0]);
-						//scene_action.play();
 
 						root.traverse(function(child){
 							mesh.push(child);
-							if (child.name == "Box" && !box)//|| child.name == "Form"*/)
+							if (child.name == "Box" && !box)
 							{
 								box = child;
-								//box.visible = false;
-								//box = null;
+							}
+							if (child.name == "Armature")
+							{
+								armatur = child;
+								baseBoxPos = new THREE.Vector3();
+								baseBoxPos.x = child.position.x;
+								baseBoxPos.y = child.position.y;
+								baseBoxPos.z = child.position.z;
 							}
 
 							if (child.name == "Injector_t")
@@ -205,7 +209,7 @@
 								needle1Model = child;
 							}
 
-                        	if (child.isMesh){
+							if (child.isMesh){
 
 								if (child.name == "Form")
 								{
@@ -236,7 +240,7 @@
 								{
 									needleCap = child;
 								}
-                    
+
 								if (child.name == "InjectorGlass" || child.name == "NeedleCap" || child.name == "NeedleCase" || child.name == "NeedleCase2Glass")
 								{
 									child.material = glassMaterial;
@@ -251,17 +255,18 @@
 										const annotationTextDiv = document.createElement('div');
 										annotationTextDiv.className = 'annotationDescription';
 										annotationTextDiv.innerHTML = 'child.userData.title';
-	
+
 											annotationTextDiv.innerHTML += '<p>' + 'test' + '</p>';
 										
 										annotationDiv.appendChild(annotationTextDiv);	
 								}
 							}
-                    	});
+						});
 
 						cameraBasePosition.x=camera.position.x;
 						cameraBasePosition.y=camera.position.y;
 						cameraBasePosition.z=camera.position.z;
+						
 
 						update();
 					},
@@ -348,18 +353,20 @@
 				orbitcontrol.enableDamping = true;
 				orbitcontrol.minDistance = 20;
 				orbitcontrol.maxDistance = 55;
+				orbitcontrol.autoRotate = true;
+				orbitcontrol.autoRotateSpeed = 0.5;
 
-				/*const color = 0xFFFFFF;
+				const color = 0xFFFFFF;
 				const intensity = 1;
 				const light = new THREE.AmbientLight(color, intensity);
-				scene.add(light);*/
+				scene.add(light);
 
-				const hemiLight = new THREE.HemisphereLight( 0xB1E1FF, 0xffffff, 1.5 );
+				//const hemiLight = new THREE.HemisphereLight( 0xB1E1FF, 0xffffff, 1.5 );
 				//hemiLight.position.set( 0, 20, 0 );
-				scene.add( hemiLight );
+				//scene.add( hemiLight );
 				const dirLight = new THREE.DirectionalLight( 0xffffff, 1.5);
 				dirLight.position.set( - 3, 10, - 10 );
-				dirLight.target.position.set(0, 0, 0);
+				//dirLight.target.position.set(0, 0, 0);
 				dirLight.castShadow = true;
 				dirLight.shadow.camera.top = 2;
 				dirLight.shadow.camera.bottom = - 2;
@@ -507,6 +514,7 @@
 				document.getElementById("backButton").style.display = "block";
 				stepindeex = 2;
 				orbitcontrol.enabled = true;
+				orbitcontrol.autoRotate = true;
 			}
 
 			function startSecondStep()
@@ -532,7 +540,8 @@
 
 			function render(time) {
 				time *= 0.001;  // convert to seconds
-
+				//console.log(orbitcontrol.object.rotation);
+				//console.log(orbitcontrol.spherical.theta);
 
 				if (isAnimate && !isTime)
 				{
@@ -555,26 +564,78 @@
 						//console.log(timedelta);
 						if (timedelta > 1.5 && !formcup.visible)
 						{
-							box.visible = true;
+							//box.visible = true;
 							form.visible = true;
 							manual.visible = true
 							formcup.visible = true;
 						}
+
+						if (timedelta > (timer_delta - 4.0) && !isBoxAnimation)
+						{
+							console.log("isBox");
+							isBoxAnimation = true;
+							box.visible = true;
+							//scene_action.paused = true;
+							const newBoxVector = new THREE.Vector3(0.5,0,0);
+							console.log(armatur.position);
+							animateVector3(armatur.position, baseBoxPos, {
+								duration: 2000, 
+								//easing : TWEEN.Easing.Quadratic.InOut,
+								update: function(d) {
+									console.log("Updating: " + d);
+								},
+								callback : function(){
+									console.log("Completed", armatur.position, timedelta);
+									
+									//transformControls.attach(selectedObject);
+									//transformControls.enabled = true;
+									//transformControls.visible = true;
+
+								}
+							});
+						}
+
 						if (timedelta > timer_delta)
 						{
 							isAnimate = false;
 							isTime = false;
 							isOpenPackageAnimate = false;
 							isRebase = false;
-
+							isBoxAnimation = false;
 							scene_action.paused = true;
 							orbitcontrol.enabled = true;
+							orbitcontrol.autoRotate = true;
 							
 							document.getElementById("openPackageButton").style.display = "block";
 						}
 					}
 					else
 					{
+						//console.log(timedelta)
+						if (timedelta > 2.0 && !isBoxAnimation)
+						{
+							console.log("isBox");
+							isBoxAnimation = true;
+							//scene_action.paused = true;
+							const newBoxVector = new THREE.Vector3(0.5,0,0);
+							console.log(armatur.position);
+							animateVector3(armatur.position, newBoxVector, {
+								duration: 2000, 
+								//easing : TWEEN.Easing.Quadratic.InOut,
+								update: function(d) {
+									console.log("Updating: " + d);
+								},
+								callback : function(){
+									console.log("Completed", armatur.position, timedelta);
+									box.visible = false;
+									//transformControls.attach(selectedObject);
+									//transformControls.enabled = true;
+									//transformControls.visible = true;
+
+								}
+							});
+
+						}
 						if (timedelta > 3.6 && formcup.visible)
 						{
 							form.visible = false;
@@ -583,8 +644,12 @@
 
 						if (timedelta > 6.625 && manual.visible)
 						{
-							box.visible = false;
+							//box.visible = false;
 							manual.visible = false;
+							if (box.visible)
+							{
+								console.log("is true");
+							}
 						}
 
 						if (timedelta > timer_delta)
@@ -592,6 +657,7 @@
 							isAnimate = false;
 							isTime = false;
 							isOpenPackageAnimate = false;
+							isBoxAnimation = false;
 
 							scene_action.paused = true;
 
@@ -653,7 +719,18 @@
 
 			function setMainDefaultPosition(pos, completeCallback)
 			{
-				//.position.set( 0, 1, - 5 );
+				//orbitcontrol.enabled = true;
+				//orbitcontrol.reset();
+				/*orbitcontrol.resetCamera = function ( ) {
+					orbitcontrol.object.position.x= pos.xPosition;
+					orbitcontrol.object.position.y = pos.yPosition;
+					orbitcontrol.object.position.z = pos.zPosition;
+				};*/
+				camera.position.x = pos.x;
+				camera.position.y = pos.y;
+				camera.position.z = pos.z;
+				if(completeCallback) completeCallback();
+				/*console.log(orbitcontrol.object.rotation);	
 				animateVector3(camera.position, pos, {
 					duration: 1000, 
 					//easing : TWEEN.Easing.Quadratic.InOut,
@@ -663,7 +740,7 @@
 					callback : function(){
 						console.log("Completed",camera.position);
 						if(completeCallback) completeCallback();
-						
+						console.log(orbitcontrol.object.rotation);
 						/*document.getElementById("backButton").style.display = "block";
 						if (stepindeex=='3') {
 							document.getElementById("injector_info").style.display = "block";
@@ -675,8 +752,8 @@
 						//transformControls.enabled = true;
 						//transformControls.visible = true;
 
-					}
-				});
+				/*}
+				});*/
 				//mainmodel.rotation.set(0,0,0);
 				//mainmodel.position.set(0,0,0);
 			}
@@ -688,8 +765,10 @@
 				let prepareButton = document.getElementById("prepareButton");
 
 				obj.onclick = function(){
-
+					console.log(orbitcontrol.rotation);
+					console.log(orbitcontrol.rotation);
 					orbitcontrol.enabled = false;
+					orbitcontrol.autoRotate = false;
 					obj.style.display = "none";
 					setMainDefaultPosition(cameraBasePosition, startOpenPackageAnimation);
 					//camera.position.set( -7, 4, - 5 );
@@ -703,6 +782,7 @@
 					console.log(camera.position);
 					
 					orbitcontrol.enabled = false;
+					orbitcontrol.autoRotate = false;
 					if (stepindeex == '2')
 					{
 						isRebase = true;
@@ -730,9 +810,10 @@
 						selectedObject.rotation.y = baseRot.y;
 						selectedObject.rotation.z = baseRot.z;
 						orbitcontrol.enabled = false;
+						orbitcontrol.autoRotate = false;
 						setMainDefaultPosition(cameraTargetPosition, function() {
 							animateVector3(selectedObject.position, basePos, {
-								duration: 1000, 
+								duration: 500, 
 								//easing : TWEEN.Easing.Quadratic.InOut,
 								update: function(d) {
 									console.log("Updating: " + d);
@@ -741,6 +822,7 @@
 									console.log("Completed");
 									//refractor.visible = false;
 									orbitcontrol.enabled = false;
+									orbitcontrol.autoRotate = false;
 									needle1Model.visible = true;
 									needle2Model.visible = true;	
 									ingectionSyringeModel.visible = true;
@@ -787,6 +869,7 @@
 								needle2Model.visible = false;
 								mooveSelectedObjAction(ingectionSyringeModel, function(){
 									orbitcontrol.enabled = true;
+									orbitcontrol.autoRotate = true;
 								});
 								return;
 							}
@@ -801,6 +884,7 @@
 								needle2Model.visible = false;
 								mooveSelectedObjAction(needle1Model, function(){
 									orbitcontrol.enabled = true;
+									orbitcontrol.autoRotate = true;
 								});
 								return;
 							}
@@ -814,6 +898,7 @@
 								needle1Model.visible = false;
 								mooveSelectedObjAction(needle2Model, function(){
 									orbitcontrol.enabled = true;
+									orbitcontrol.autoRotate = true;
 								});
 								return;
 							}	
@@ -888,87 +973,6 @@
 				// return the tween in case we want to manipulate it later on
 				return tweenVector3;
 			}
-/*
-			window.addEventListener('contextmenu', (e) => {
-				e.preventDefault();
-			})
-
-			window.addEventListener('mousedown', (e) => {
-				e.preventDefault();
-				isMouseDown = true;
-				//console.log(e);
-			});
-
-			window.addEventListener('mouseup', (e) => {
-				e.preventDefault();
-				isMouseDown = false;
-				//console.log(e);
-			});
-			
-			window.addEventListener('mousemove', (e) => {
-				//console.log(e);
-				if (isMouseDown && (stepindeex == '3' || stepindeex == '4' || stepindeex == '5'))
-				{
-					mouse.position.x = e.screenX;
-					mouse.position.y = e.screenY;
-					mouse.speed.x = e.movementX;
-					mouse.speed.y = e.movementY;
-					moove(mouse);
-				}
-			});
-
-			function moove(mouse) {
-				if (selectedObject)
-				{
-					//selectedObject.rotateY(-mouse.speed.y * 0.005);
-					//selectedObject.rotateZ(-mouse.speed.x * 0.005);
-					selectedObject.rotateX(mouse.speed.x * 0.005);
-				}
-			}
-
-			//var src = document.getElementById("source");
-
-			/*document.addEventListener('touchstart', function(e) {
-				// Iterate through the touch points and log each screenX/Y coordinate.
-				// The unit of each coordinate is CSS pixels.
-				var i;
-				for (i=0; i < e.touches.length; i++) {
-					console.log("touchpoint[" + i + "].screenX = " + e.touches[i].screenX);
-					console.log("touchpoint[" + i + "].screenY = " + e.touches[i].screenY);
-				}
-			}, false);*/
-
-			//var el = document.getElementById("canvas");
-/*			container.addEventListener("touchstart", function(e) {
-				//isMouseDown = true;
-				//console.log("start touch")
-				my_touch.start_position.x = e.touches[0].pageX;
-				my_touch.start_position.y = e.touches[0].pageY;
-			}, false);
-			container.addEventListener("touchmove", function(e) {
-				if (stepindeex == '3' || stepindeex == '4' || stepindeex == '5')
-				{
-					my_touch.position.x = e.touches[0].pageX;
-					my_touch.position.y = e.touches[0].pageY;
-					//console.log(my_touch.start_position," ",my_touch.position);
-					moove_mobile(my_touch);
-					//handleMove(e);
-				}
-			}, false);
-
-			function moove_mobile(touch){
-				if (touch.position.x > touch.start_position.x)
-				{
-					selectedObject.rotation.y += 0.1
-				}
-				else if (touch.position.x < touch.start_position.x)
-				{
-					selectedObject.rotation.y -= 0.1
-				}
-				touch.start_position.x = touch.position.x;
-				touch.start_position.y = touch.position.y;
-			}
-*/
 			InitUIClick();
 			
         </script>
