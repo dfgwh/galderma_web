@@ -411,7 +411,7 @@
 			scene_action.timeScale = 1;
 			scene_action.setLoop(THREE.LoopOnce);
 			scene_action.clampWhenFinished = true;
-
+			manual.visible = true;
 			scene_action.play();
 			isAnimate = true;
 			isOpenPackageAnimate = true;
@@ -542,6 +542,10 @@
 						formcup.visible = true;
 					}
 
+					if (timedelta > (timer_delta - 4.5) && manual.visible) {
+						manual.visible = false;
+					}
+
 					if (timedelta > (timer_delta - 4.0) && !isBoxAnimation) {
 						isBoxAnimation = true;
 						box.visible = true;
@@ -555,6 +559,7 @@
 							},
 							callback: function () {
 								console.log("Completed", armatur.position, timedelta);
+								manual.visible = true;
 							}
 						});
 					}
@@ -575,7 +580,7 @@
 				else {
 					if (timedelta > 2.0 && !isBoxAnimation) {
 						isBoxAnimation = true;
-						const newBoxVector = new THREE.Vector3(0.5, 0, 0);
+						const newBoxVector = new THREE.Vector3(0.5, 0.01, 0);
 						console.log(armatur.position);
 						animateVector3(armatur.position, newBoxVector, {
 							duration: 2000,
@@ -893,7 +898,8 @@
 			}
 		}
 		// key - true выключть объект
-		function swichFormOpacity(key) {		
+		function swichFormOpacity(key) {	
+			form.transparent = true;	
 			if (key)
 				isFormOpacityIn = true;
 			else {
