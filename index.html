@@ -138,11 +138,8 @@
 			clearcoat: 1.0,
 			clearcoatRoughness: 0.39
 		});
-		let isFormOpacityIn = false,
-			isBoxManualOpacityIn = false, isInjectorOpacityIn = false,
-			isNeedle1OpacityIn = false, isNeedle2OpacityIn = false,
-			isInjectorFullOpacityIn = false;
-		let opacityDelay = 0.001;
+		let isFormOpacityIn = false, isFormOpacityOut = false;
+		let opacityDelay = 0.01;
 
 		// animation field
 
@@ -458,12 +455,11 @@
 
 			scene_action.paused = false;
 
-			injectorFullOpacity(true);
-
-			/*needle2Model.visible = false;
+			
+			needle2Model.visible = false;
 			plangerCap.visible = false;
 			needleCase.visible = false;
-			needleCap.visible = false;*/
+			needleCap.visible = false;
 
 			isAnimate = true;
 			isPrepareAnimate = true;
@@ -541,7 +537,7 @@
 				if (isRebase) {
 					//console.log(timedelta);
 					if (timedelta > 1.5 && !formcup.visible) {
-						form.visible = true;
+						swichFormOpacity(false);
 						manual.visible = true
 						formcup.visible = true;
 					}
@@ -589,7 +585,7 @@
 							},
 							callback: function () {
 								console.log("Completed", armatur.position, timedelta);
-								//box.visible = false;
+								box.visible = false;
 							}
 						});
 
@@ -600,9 +596,9 @@
 						formcup.visible = false;
 					}
 
-					if (timedelta > 4.625 && manual.visible)
+					if (timedelta > 6.625 && manual.visible)
 					{
-						swichBoxManualOpacity(true);
+						manual.visible = false;
 					}
 
 					if (timedelta > timer_delta) {
@@ -897,49 +893,13 @@
 			}
 		}
 		// key - true выключть объект
-		function swichFormOpacity(key) {
-			form.transparent = true;
-			formcup.transparent = true;
-
+		function swichFormOpacity(key) {		
 			if (key)
-			isFormOpacityIn = true;
-			/*else
-				isOpacityOut = true;*/
-		}
-
-		function swichBoxManualOpacity(key) {
-			console.log("dddd")
-			box.transparent = true;
-			manual.transparent = true;
-			box.material.opacity = 0;
-
-			if (key)
-			isBoxManualOpacityIn = true;
-			/*else
-				isOpacityOut = true;*/
-		}
-
-
-		function injectorFullOpacity(key) {
-			
-			needle2Model.traverse(function (child) {
-				child.transparent = true;
-			});
-			needle2Model.transparent = true;
-			needleCap.transparent = true;
-			needleCase.transparent = true;
-			plangerCap.transparent = true;
-			needleCap.traverse(function (child) {
-				child.transparent = true;
-			});
-			needleCase.traverse(function (child) {
-				child.transparent = true;
-			});
-
-			if (key)
-			isInjectorFullOpacityIn = true;
-			/*else
-				isOpacityOut = true;*/
+				isFormOpacityIn = true;
+			else {
+				form.visible = true;
+				isFormOpacityOut = true;
+			}
 		}
 
 		function opacityMeshesStatus() {
@@ -957,61 +917,20 @@
 					//ormcup.material.opacity = 1;
 				}
 			}
-			if (isBoxManualOpacityIn) {
-				console.log(box.material.opacity);
-				if (box.material.opacity > 0) {
-					box.material.opacity -= opacityDelay;
-					manual.material.opacity -= opacityDelay;
-				}
-				else {
-					isBoxManualOpacityIn = false;
-					box.material.opacity = 0;
-					manual.material.opacity = 0;
-					box.visible = false;
-					manual.visible = false;
-				}
-			}
-			if (isInjectorFullOpacityIn) {
-				console.log(needleCase.material.opacity)
-				if (needleCase.material.opacity > 0) {
-					needleCap.material.opacity -= opacityDelay;
-					needleCase.material.opacity -= opacityDelay;
-					plangerCap.material.opacity -= opacityDelay;
-					needleCap.traverse(function (child) {
-						child.material.opacity -= opacityDelay;
-					});
-					needleCase.traverse(function (child) {
-						child.material.opacity -= opacityDelay;
-					});
-					needle2Model.traverse(function (child) {
-						if (child.isMesh)
-							child.material.opacity -= opacityDelay;
-					});
-				}
-				else {
-					isInjectorFullOpacityIn = false;
-					needleCap.material.opacity = 0;
-					needleCase.material.opacity = 0;
-					plangerCap.material.opacity = 0;
-					needleCap.visible = false;
-					needleCase.visible = false;
-					plangerCap.visible = false;
-					needleCap.traverse(function (child) {
-						child.material.opacity = 0;
-						child.visible = false;
-					});
-					needleCase.traverse(function (child) {
-						child.material.opacity = 0;
-						child.visible = false;
-					});
-					needle2Model.traverse(function (child) {
-						if (child.isMesh)
-							child.material.opacity = 0;
-						child.visible = false;
-					});
 
+			if (isFormOpacityOut) {
+				if (form.material.opacity < 0.4) {
+					form.material.opacity += opacityDelay*0.1;
+					//formcup.material.opacity -= opacityDelay;
+				}
+				else {
+					isFormOpacityOut = false;
+					formcup.visible = true;
+					form.material.opacity = 0.4;
+					//ormcup.material.opacity = 1;
 				}
 			}
+			
 
 		}
 
