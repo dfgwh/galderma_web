@@ -197,13 +197,13 @@
 					root.scale.set(60, 60, 60)
 					scene.add(root);
 					mainmodel = root;
-					console.log(dumpObject(root).join('\n'));
+					//console.log(dumpObject(root).join('\n'));
 					skeleton = new THREE.SkeletonHelper(root);
 					skeleton.visible = false;
 					scene.add(skeleton);
 
 					const clips = root.animations;
-					console.log(clips);
+					//console.log(clips);
 					mixer = new THREE.AnimationMixer(root);
 
 					scene_action = mixer.clipAction(clips[0]);
@@ -277,7 +277,7 @@
 					update();
 				},
 				(xhr) => {
-					console.log((xhr.loaded / xhr.total) * 100 + '% loaded')
+					//console.log((xhr.loaded / xhr.total) * 100 + '% loaded')
 					progressBar.style.width = ((xhr.loaded / xhr.total) * 90) + "%";
 				},
 				(error) => {
@@ -304,7 +304,7 @@
 					if (box.material.map.image != null) {
 						isLoader = false;
 						progressBar.style.width = 100 + "%";
-						console.log("switch");
+						//console.log("switch");
 						document.getElementById('loaderPage').style.display = "none";
 						document.getElementById('openPackageButton').style.display = "block";
 					}
@@ -535,7 +535,6 @@
 
 			if (isAnimate && isOpenPackageAnimate) {
 				if (isRebase) {
-					//console.log(timedelta);
 					if (timedelta > 1.5 && !formcup.visible) {
 						swichFormOpacity(false);
 						manual.visible = true
@@ -550,15 +549,14 @@
 						isBoxAnimation = true;
 						box.visible = true;
 						const newBoxVector = new THREE.Vector3(0.5, 0, 0);
-						console.log(armatur.position);
 						animateVector3(armatur.position, baseBoxPos, {
 							duration: 2000,
 							//easing : TWEEN.Easing.Quadratic.InOut,
 							update: function (d) {
-								console.log("Updating: " + d);
+								//console.log("Updating: " + d);
 							},
 							callback: function () {
-								console.log("Completed", armatur.position, timedelta);
+								//console.log("Completed", armatur.position, timedelta);
 								manual.visible = true;
 							}
 						});
@@ -581,15 +579,14 @@
 					if (timedelta > 2.0 && !isBoxAnimation) {
 						isBoxAnimation = true;
 						const newBoxVector = new THREE.Vector3(0.5, 0.01, 0);
-						console.log(armatur.position);
 						animateVector3(armatur.position, newBoxVector, {
 							duration: 2000,
 							//easing : TWEEN.Easing.Quadratic.InOut,
 							update: function (d) {
-								console.log("Updating: " + d);
+								//console.log("Updating: " + d);
 							},
 							callback: function () {
-								console.log("Completed", armatur.position, timedelta);
+								//console.log("Completed", armatur.position, timedelta);
 								box.visible = false;
 							}
 						});
@@ -665,8 +662,6 @@
 			let prepareButton = document.getElementById("prepareButton");
 
 			openPackButton.onclick = function () {
-				console.log(orbitcontrol.rotation);
-				console.log(orbitcontrol.rotation);
 				orbitcontrol.enabled = false;
 				orbitcontrol.autoRotate = false;
 				openPackButton.style.display = "none";
@@ -674,8 +669,6 @@
 			}
 
 			backButton.onclick = function () {
-				console.log(camera.position);
-
 				orbitcontrol.enabled = false;
 				orbitcontrol.autoRotate = false;
 				if (stepindeex == '2') {
@@ -705,10 +698,10 @@
 							duration: 500,
 							//easing : TWEEN.Easing.Quadratic.InOut,
 							update: function (d) {
-								console.log("Updating: " + d);
+								//console.log("Updating: " + d);
 							},
 							callback: function () {
-								console.log("Completed");
+								//console.log("Completed");
 								orbitcontrol.enabled = false;
 								orbitcontrol.autoRotate = false;
 								needle1Model.visible = true;
@@ -844,55 +837,66 @@
 			return tweenVector3;
 		}
 
-		let deltaX, isX, deltaY, isY, deltaZ, isZ;
+		let deltaX, isX = false, deltaY, isY = false, deltaZ, isZ = false;
 		let cameraSpeed = 0.1;
-		let border = 0.2;
+		let border = 0.05;
 		function mooveCameraToTarget() {
 			if (isMoovingCamera) {
 				deltaX = camera.position.x - currentCameraTarget.x;
-				isX = false;
-				if (!(deltaX < border && deltaX > -border)) {
-					if (camera.position.x > currentCameraTarget.x) {
-						camera.position.x -= cameraSpeed;
+
+				if (!isX && isZ)
+				{
+					if (!(deltaX < border && deltaX > -border)) {
+						if (camera.position.x > currentCameraTarget.x) {
+							camera.position.x -= cameraSpeed;
+						} else if (camera.position.x < currentCameraTarget.x) {
+							camera.position.x += cameraSpeed;
+						}
+					} else {
+						isX = true;
+						//console.log("Camera position x - success",camera.position.x);
 					}
-					else if (camera.position.x < currentCameraTarget.x) {
-						camera.position.x += cameraSpeed;
-					}
-				}
-				else {
-					isX = true;
 				}
 
+
 				deltaY = camera.position.y - currentCameraTarget.y;
-				isY = false;
-				if (!(deltaY < border && deltaY > -border)) {
-					if (camera.position.y > currentCameraTarget.y) {
-						camera.position.y -= cameraSpeed;
+
+				if (!isY && isZ)
+				{
+					if (!(deltaY < border && deltaY > -border)) {
+						if (camera.position.y > currentCameraTarget.y) {
+							camera.position.y -= cameraSpeed;
+						} else if (camera.position.y < currentCameraTarget.y) {
+							camera.position.y += cameraSpeed;
+						}
+					} else {
+						isY = true;
+						//console.log("Camera position y - success");
 					}
-					else if (camera.position.y < currentCameraTarget.y) {
-						camera.position.y += cameraSpeed;
-					}
-				}
-				else {
-					isY = true;
 				}
 
 				deltaZ = camera.position.z - currentCameraTarget.z;
-				isZ = false;
-				if (!(deltaZ < border && deltaZ > -border)) {
-					if (camera.position.z > currentCameraTarget.z) {
-						camera.position.z -= cameraSpeed;
+
+				if (!isZ)
+				{
+					if (!(deltaZ < border && deltaZ > -border)) {
+						if (camera.position.z > currentCameraTarget.z) {
+							camera.position.z -= cameraSpeed;
+						} else if (camera.position.z < currentCameraTarget.z) {
+							camera.position.z += cameraSpeed;
+						}
+					} else {
+						isZ = true;
+						//console.log("Camera position z - success");
 					}
-					else if (camera.position.z < currentCameraTarget.z) {
-						camera.position.z += cameraSpeed;
-					}
-				}
-				else {
-					isZ = true;
 				}
 
 				if (isX && isY && isZ) {
-					isMoovingCamera = false
+					isMoovingCamera = false;
+					isX = false;
+					isY = false;
+					isZ = false;
+					//console.log("camera position in target", camera.position, currentCameraTarget);
 				}
 
 			}
