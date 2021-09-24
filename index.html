@@ -78,6 +78,9 @@
 			let refractor;
 			let cameraBasePosition;
 			let cameraTargetPosition;
+			let isMoovingCamera;
+			let currentCameraTarget;
+
 			//let transformControls;
 
 			// model field
@@ -308,7 +311,7 @@
 						}
 
 					}
-
+					mooveCameraToTarget();
 					requestAnimationFrame(animate)
 					orbitcontrol.update();
 					TWEEN.update()
@@ -728,22 +731,24 @@
 				};*/
 				/*camera.position.x = pos.x;
 				camera.position.y = pos.y;
-				camera.position.z = pos.z;
-				if(completeCallback) completeCallback();*/
+				camera.position.z = pos.z;*/
+				isMoovingCamera = true;
+				currentCameraTarget = new THREE.Vector3(pos.x, pos.y, pos.z)
+				if(completeCallback) completeCallback();
 				//var tween2 = TWEEN.Tween(camera.position).to({x: pos.x, y: pos.y, z: pos.z,}, 500);
 				
-				var tween2 = new TWEEN.Tween(camera.position)
-					.to({ x: pos.x, y: pos.y, z: pos.z, }, 500)
+				//var tween2 = new TWEEN.Tween(camera.position)
+				//	.to({ x: pos.x, y: pos.y, z: pos.z, }, 500)
 					/*.easing(easing)
 					.onUpdate(function(d) {
 						if(options.update){ 
 							options.update(d);
 						}
 					})*/
-					.onComplete(function(){
-					if(completeCallback) completeCallback();
-					});
-				tween2.start();
+				//	.onComplete(function(){
+				//	if(completeCallback) completeCallback();
+				//	});
+				//tween2.start();
 				/*console.log(orbitcontrol.object.rotation);	
 				animateVector3(camera.position, pos, {
 					duration: 1000, 
@@ -987,6 +992,73 @@
 				// return the tween in case we want to manipulate it later on
 				return tweenVector3;
 			}
+
+			let deltaX, isX, deltaY, isY, deltaZ, isZ;
+			let cameraSpeed = 0.1;
+			let border = 0.2;
+			function mooveCameraToTarget()
+			{
+				if (isMoovingCamera)
+				{
+					deltaX = camera.position.x - currentCameraTarget.x;
+					isX = false;
+					if (!(deltaX < border && deltaX > -border))
+					{
+						if (camera.position.x > currentCameraTarget.x)
+						{
+							camera.position.x -= cameraSpeed;
+						}
+						else if (camera.position.x < currentCameraTarget.x)
+						{
+							camera.position.x += cameraSpeed;
+						}
+					}
+					else {
+						isX = true;
+					}
+
+					deltaY = camera.position.y - currentCameraTarget.y;
+					isY = false;
+					if (!(deltaY < border && deltaY > -border))
+					{
+						if (camera.position.y > currentCameraTarget.y)
+						{
+							camera.position.y -= cameraSpeed;
+						}
+						else if (camera.position.y < currentCameraTarget.y)
+						{
+							camera.position.y += cameraSpeed;
+						}
+					}
+					else {
+						isY = true;
+					}
+
+					deltaZ = camera.position.z - currentCameraTarget.z;
+					isZ = false;
+					if (!(deltaZ < border && deltaZ > -border))
+					{
+						if (camera.position.z > currentCameraTarget.z)
+						{
+							camera.position.z -= cameraSpeed;
+						}
+						else if (camera.position.z < currentCameraTarget.z)
+						{
+							camera.position.z += cameraSpeed;
+						}
+					}
+					else {
+						isZ = true;
+					}
+
+					if (isX&&isY&&isZ)
+					{
+						isMoovingCamera = false
+					}
+
+				}
+			}
+
 			InitUIClick();
 			
         </script>
