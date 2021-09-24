@@ -726,10 +726,24 @@
 					orbitcontrol.object.position.y = pos.yPosition;
 					orbitcontrol.object.position.z = pos.zPosition;
 				};*/
-				camera.position.x = pos.x;
+				/*camera.position.x = pos.x;
 				camera.position.y = pos.y;
 				camera.position.z = pos.z;
-				if(completeCallback) completeCallback();
+				if(completeCallback) completeCallback();*/
+				//var tween2 = TWEEN.Tween(camera.position).to({x: pos.x, y: pos.y, z: pos.z,}, 500);
+				
+				var tween2 = new TWEEN.Tween(camera.position)
+					.to({ x: pos.x, y: pos.y, z: pos.z, }, 500)
+					/*.easing(easing)
+					.onUpdate(function(d) {
+						if(options.update){ 
+							options.update(d);
+						}
+					})*/
+					.onComplete(function(){
+					if(completeCallback) completeCallback();
+					});
+				tween2.start();
 				/*console.log(orbitcontrol.object.rotation);	
 				animateVector3(camera.position, pos, {
 					duration: 1000, 
