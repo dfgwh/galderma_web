@@ -6,7 +6,9 @@
 
 	<meta charset="UTF-8">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
-	<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1, user-scalable=no">
+	<meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0, initial-scale=1.0, minimal-ui">
+	<meta name="apple-mobile-web-app-capable" content="yes">
+	<meta name="apple-mobile-web-app-status-bar-style" content="black">
 
 	<link type="text/css" rel="stylesheet" href="main.css">
 
@@ -27,9 +29,6 @@
 </head>
 
 <body>
-	<script src="three.js"></script>
-	<script src="js/main.js"></script>
-
 	<div class="container">
 		<div id="loaderPage">
 			<img src="images/GALDERMA_LOGO.svg">
@@ -40,34 +39,35 @@
 		</div>
 		<div id="openPackageButton" type="button">
 			<div class="blockInButton">
-				<img src="images/open_icon.svg">
+				<img src="images/open_icon.svg" alt="open" title="open">
 				<span>Open Package</span>
 			</div>
 		</div>
 		<div id="backButton" type="button">
 			<div class="blockInButton">
-				<img src="images/Vector4.svg">
+				<img src="images/Vector4.svg" alt="back" title="back">
 				<span>Back</span>
 			</div>
 		</div>
 		<div id="prepareButton" type="button">
 			<div class="blockInButton">
-				<img src="images/prepare_icon.png">
+				<img src="images/prepare_icon.png" alt="prepare" title="prepare">
 				<span>Prepare</span>
 			</div>
 		</div>
 		<div class="post_info" id="injector_info">
 			<span class="post_header">Injection<br>Syringe</span>
-			<img src="images/message_ing.svg"><span></span></img>
+			<img src="images/message_ing.svg" alt="A massa id libero lacinia pharetra id eget diam" title="Injection"></img>
 		</div>
 		<div class="post_info" id="needle_info">
 			<span class="post_header">Needle</span>
-			<img src="images/message_needle.svg"><span></span></img>
+			<img src="images/message_needle.svg" alt="Contains a massa id libero lacinia pharetra id eget diam" title="Needle"></img>
 		</div>
 	</div>
 
 	<script type="module">
 
+		import * as THREE from './three/build/three.module.js';
 		import { OrbitControls } from './three/examples/jsm/controls/OrbitControls.js';
 		import { FBXLoader } from './three/examples/jsm/loaders/FBXLoader.js';
 		import { TWEEN } from './three/examples/jsm/libs/tween.module.min.js';
