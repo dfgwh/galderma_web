@@ -230,3 +230,21 @@ a, button, input, select {
 	color: #FFFFFF;
 	font-size: 40px;
 }
+.label {
+	font-family: sans-serif;
+	padding: 2px;
+	height: 60px;
+}
+.annotationDescription {
+	color: #ffffff;
+	font-family: monospace;
+	pointer-events: none;
+	font-size: 14px;
+	position: absolute;
+	left: 25px;
+	padding: 1em;
+	width: 200px;
+	background: rgba(0, 0, 0, 0.66);
+	border-radius: 0.5em;
+	transition: opacity 0.5s;
+	display: none;

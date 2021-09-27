@@ -30,6 +30,7 @@
 
 <body>
 	<div class="container">
+		<div id = "renderer"></div>
 		<div id="loaderPage">
 			<img src="images/GALDERMA_LOGO.svg">
 			<div id="progressBar" min="0" max="100">
@@ -71,7 +72,10 @@
 		import { OrbitControls } from './three/examples/jsm/controls/OrbitControls.js';
 		import { FBXLoader } from './three/examples/jsm/loaders/FBXLoader.js';
 		import { TWEEN } from './three/examples/jsm/libs/tween.module.min.js';
-
+		import {
+			CSS2DRenderer,
+			CSS2DObject
+		} from './three/examples/jsm/renderers/CSS2DRenderer.js'
 		// scene field
 
 		let scene, renderer, camera, orbitcontrol;
@@ -88,8 +92,11 @@
 			needle2Model, box, form, manual, formcup,
 			plangerCap, needleCase, needleCap, selectedObject, armatur;
 		let basePos, baseRot, baseBoxPos;
+		let injectorGlass;
 		const cubeRenderTarget = new THREE.WebGLCubeRenderTarget(2048)
 		const cubeCamera = new THREE.CubeCamera(0.1, 100, cubeRenderTarget)
+		const cubeRenderTarget1 = new THREE.WebGLCubeRenderTarget(2048)
+		const cubeCamera1 = new THREE.CubeCamera(0.1, 100, cubeRenderTarget1)
 		const glassMaterial = new THREE.MeshPhysicalMaterial({
 			metalness: 0.5,
 			roughness: 0.2,
@@ -129,8 +136,8 @@
 		const formMaterial = new THREE.MeshPhysicalMaterial({
 			metalness: 1.0,
 			roughness: 0.2,
-			envMap: cubeRenderTarget.texture,
-			refractionRatio: 0.95,
+			envMap: cubeRenderTarget1.texture,
+			refractionRatio: 0.3,
 			transparent: true,
 			opacity: 0.2,
 			transmission: 0.1,
@@ -158,6 +165,10 @@
 		// ui
 
 		let progressBar;
+		let labelRenderer;
+		let injectorLabel, needle1Label, needle2Label;
+		const labelRendererEl = document.getElementById("renderer");
+		const textureLoader = new THREE.TextureLoader();
 
 		// app field
 
@@ -186,6 +197,7 @@
 		function init() {
 
 			progressBar = document.getElementById("progress");
+			
 
 			createScene();
 			scene.add(cubeCamera)
@@ -261,6 +273,7 @@
 
 							if (child.name == "InjectorGlass") {
 								child.material = glassMaterial;
+								injectorGlass = child;
 							}
 
 							if (child.name == "NeedleCase2Glass") {
@@ -272,6 +285,37 @@
 					cameraBasePosition.x = camera.position.x;
 					cameraBasePosition.y = camera.position.y;
 					cameraBasePosition.z = camera.position.z;
+
+					const injectorImg = document.createElement( 'img' );
+					injectorImg.className = 'label';
+					injectorImg.src = 'images/label_injector.svg';
+					injectorImg.style.marginTop = '-1em';
+					injectorLabel = new CSS2DObject( injectorImg );
+					injectorLabel.position.set( 0,0,0);
+					injectorGlass.add( injectorLabel );
+
+					const needle1Img = document.createElement( 'img' );
+					needle1Img.className = 'label';
+					needle1Img.src = 'images/label_needle.svg';
+					needle1Img.style.marginTop = '-1em';
+					needle1Label = new CSS2DObject( needle1Img );
+					needle1Label.position.set( 0,0,0);
+					needle1Model.add( needle1Label );
+
+					const needle2Img = document.createElement( 'img' );
+					needle2Img.className = 'label';
+					needle2Img.src = 'images/label_needle.svg';
+					needle2Img.style.marginTop = '-1em';
+					needle2Label = new CSS2DObject( needle2Img );
+					needle2Label.position.set( 0,0,0);
+					needle2Model.add( needle2Label );
+
+					switchLabel(false);
+
+
+					//earthLabel.visible = false;
+
+					//moonLabel.visible = false;
 
 
 					update();
@@ -290,8 +334,8 @@
 			function onWindowResize() {
 				camera.aspect = window.innerWidth / window.innerHeight;
 				camera.updateProjectionMatrix();
-
-				renderer.setSize(window.innerWidth, window.innerHeight)
+				labelRenderer.setSize( window.innerWidth, window.innerHeight );
+				renderer.setSize(window.innerWidth, window.innerHeight);
 			}
 
 			function update() {
@@ -314,10 +358,12 @@
 				opacityMeshesStatus();
 
 				mooveCameraToTarget();
-				requestAnimationFrame(animate)
+				requestAnimationFrame(animate);
 				orbitcontrol.update();
-				TWEEN.update()
-				renderer.render(scene, camera)
+				TWEEN.update();
+				labelRenderer.render( scene, camera );
+				renderer.render(scene, camera);
+
 
 
 			}
@@ -347,8 +393,14 @@
 			renderer.shadowMap.enabled = true;
 			container.appendChild(renderer.domElement);
 
+			labelRenderer = new CSS2DRenderer();
+			labelRenderer.setSize( window.innerWidth, window.innerHeight );
+			labelRenderer.domElement.style.position = 'absolute';
+			labelRenderer.domElement.style.top = '0px';
+			labelRendererEl.appendChild( labelRenderer.domElement );
+
 			//OrbitControls
-			orbitcontrol = new OrbitControls(camera, renderer.domElement);
+			orbitcontrol = new OrbitControls(camera, labelRenderer.domElement);
 			orbitcontrol.update();
 			orbitcontrol.maxPolarAngle = Math.PI / 2.5;
 			//orbitcontrol.minPolarAngle = Math.PI / 3;
@@ -504,6 +556,7 @@
 		function startSecondStep() {
 			document.getElementById("backButton").style.display = "block";
 			document.getElementById("prepareButton").style.display = "block";
+			switchLabel(true);
 			stepindeex = 1;
 		}
 
@@ -542,7 +595,7 @@
 					}
 
 					if (timedelta > (timer_delta - 4.5) && manual.visible) {
-						manual.visible = false;
+						//manual.visible = false;
 					}
 
 					if (timedelta > (timer_delta - 4.0) && !isBoxAnimation) {
@@ -657,11 +710,13 @@
 		}
 
 		function InitUIClick() {
+			console.log("init");
 			let openPackButton = document.getElementById("openPackageButton");
 			let backButton = document.getElementById("backButton");
 			let prepareButton = document.getElementById("prepareButton");
 
 			openPackButton.onclick = function () {
+				console.log("open");
 				orbitcontrol.enabled = false;
 				orbitcontrol.autoRotate = false;
 				openPackButton.style.display = "none";
@@ -679,6 +734,7 @@
 					isRebase = true;
 					backButton.style.display = "none";
 					prepareButton.style.display = "none";
+					switchLabel(false);
 					setMainDefaultPosition(cameraBasePosition, reversOpenPackageAnimation);
 					//camera.position.set( -7, 4, - 5 );
 					stepindeex = 0;
@@ -715,12 +771,20 @@
 				}
 			}
 			prepareButton.onclick = function () {
+				switchLabel(false);
 				startPrepareAnimation();
 			}
 
 
 		}
 
+
+		function switchLabel(key)
+		{
+			injectorLabel.visible = key;
+			needle1Label.visible = key;
+			needle2Label.visible = key;
+		}
 
 		document.addEventListener('click', onDocumentMouseDown, false);
 
@@ -740,6 +804,7 @@
 							element.object.name == "plungerCap" ||
 							element.object.name == "InjectorPlunger")
 							&& stepindeex == '1') {
+							switchLabel(false);
 							stepindeex = 3;
 							needle1Model.visible = false;
 							needle2Model.visible = false;
@@ -753,6 +818,7 @@
 							element.object.name == "NeedleCase" ||
 							element.object.name == "NeedleCap")
 							&& stepindeex == '1') {
+							switchLabel(false);
 							stepindeex = 4;
 							ingectionSyringeModel.visible = false;
 							needle2Model.visible = false;
@@ -765,6 +831,7 @@
 						if ((element.object.name == "NeedleCase2" ||
 							element.object.name == "NeedleCase2Glass")
 							&& stepindeex == '1') {
+							switchLabel(false);
 							stepindeex = 5;
 							ingectionSyringeModel.visible = false;
 							needle1Model.visible = false;
@@ -923,6 +990,7 @@
 					isFormOpacityIn = false;
 					form.visible = false;
 					formcup.visible = false;
+					//injectorGlass.material = glassMaterial;
 					form.material.opacity = 0;
 					//ormcup.material.opacity = 1;
 				}
