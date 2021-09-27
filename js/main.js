@@ -25,13 +25,12 @@ let basePos, baseRot, baseBoxPos;
 let injectorGlass;
 const cubeRenderTarget = new THREE.WebGLCubeRenderTarget(2048);
 const cubeCamera = new THREE.CubeCamera(0.1, 100, cubeRenderTarget);
-const cubeRenderTarget1 = new THREE.WebGLCubeRenderTarget(2048);
-const cubeCamera1 = new THREE.CubeCamera(0.1, 100, cubeRenderTarget1);
+
 const glassMaterial = new THREE.MeshPhysicalMaterial({
     metalness: 0.5,
     roughness: 0.2,
     envMap: cubeRenderTarget.texture,
-    refractionRatio: 0.95,
+    //refractionRatio: 0.95,
     transparent: true,
     opacity: 0.4,
     transmission: 0.1,
@@ -39,41 +38,17 @@ const glassMaterial = new THREE.MeshPhysicalMaterial({
     clearcoat: 1.0,
     clearcoatRoughness: 0.39
 });
-const needle1Material = new THREE.MeshPhysicalMaterial({
-    metalness: 0.5,
-    roughness: 0.2,
-    envMap: cubeRenderTarget.texture,
-    refractionRatio: 0.95,
-    transparent: true,
-    opacity: 0.4,
-    transmission: 0.1,
-    side: THREE.FrontSide,
-    clearcoat: 1.0,
-    clearcoatRoughness: 0.39
-});
-const needle2Material = new THREE.MeshPhysicalMaterial({
-    metalness: 0.5,
-    roughness: 0.2,
-    envMap: cubeRenderTarget.texture,
-    refractionRatio: 0.95,
-    transparent: true,
-    opacity: 0.4,
-    transmission: 0.1,
-    side: THREE.FrontSide,
-    clearcoat: 1.0,
-    clearcoatRoughness: 0.39
-});
+
 const formMaterial = new THREE.MeshPhysicalMaterial({
-    metalness: 1.0,
-    roughness: 0.2,
-    envMap: cubeRenderTarget1.texture,
-    refractionRatio: 0.3,
+    color: 0x343434,
+    transmission: 0.5,
+    opacity: 0.5,
+    metalness: 0.8,
     transparent: true,
-    opacity: 0.2,
-    transmission: 0.1,
-    side: THREE.FrontSide,
-    clearcoat: 1.0,
-    clearcoatRoughness: 0.39
+    roughness: 0,
+    envMap: cubeRenderTarget.texture,
+    envMapIntensity: 1,
+    depthWrite: false,
 });
 let isFormOpacityIn = false, isFormOpacityOut = false;
 let opacityDelay = 0.01;
@@ -195,21 +170,22 @@ function init() {
 
                     if (child.name == "NeedleCase") {
                         needleCase = child;
-                        child.material = needle1Material;
+                        child.material = glassMaterial;
                     }
 
                     if (child.name == "NeedleCap") {
                         needleCap = child;
-                        child.material = needle1Material;
+                        child.material = glassMaterial;
                     }
 
                     if (child.name == "InjectorGlass") {
                         child.material = glassMaterial;
                         injectorGlass = child;
+                        //child.material = glassInFormMaterial;
                     }
 
                     if (child.name == "NeedleCase2Glass") {
-                        child.material = needle2Material;
+                        child.material = glassMaterial;
                     }
                 }
             });
@@ -581,6 +557,7 @@ function render(time) {
                 //form.visible = false;
                 swichFormOpacity(true);
                 formcup.visible = false;
+
             }
 
             if (timedelta > 6.625 && manual.visible)
@@ -924,12 +901,14 @@ function opacityMeshesStatus() {
             formcup.visible = false;
             //injectorGlass.material = glassMaterial;
             form.material.opacity = 0;
+            //injectorGlass.material = glassMaterial;
             //ormcup.material.opacity = 1;
         }
     }
 
     if (isFormOpacityOut) {
         if (form.material.opacity < 0.4) {
+            //injectorGlass.material = glassInFormMaterial;
             form.material.opacity += opacityDelay*0.1;
             //formcup.material.opacity -= opacityDelay;
         }
@@ -957,5 +936,6 @@ function openFullscreen() {
         elem.msRequestFullscreen();
     }
 }
+
 
 InitUIClick();
