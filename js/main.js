@@ -424,7 +424,7 @@ function startPrepareAnimation() {
 
     isAnimate = true;
     isPrepareAnimate = true;
-    orbitcontrol.enabled = false;
+    //orbitcontrol.enabled = false;
 
     document.getElementById("prepareButton").style.display = "none";
     document.getElementById("backButton").style.display = "none";
@@ -454,7 +454,7 @@ function endReversPrepareAnimation() {
     isRebase = false;
 
     startSecondStep();
-    orbitcontrol.enabled = true;
+    //orbitcontrol.enabled = true;
 }
 
 function endPrepareAnimation() {
@@ -667,13 +667,13 @@ function InitUIClick() {
                     },
                     callback: function () {
                         //console.log("Completed");
-                        
+                        orbitcontrol.enabled = false;
                         orbitcontrol.autoRotate = false;
                         needle1Model.visible = true;
                         needle2Model.visible = true;
                         ingectionSyringeModel.visible = true;
                         startSecondStep();
-                        orbitcontrol.enabled = true;
+                        //orbitcontrol.enabled = true;
                     }
                 });
             });
@@ -683,7 +683,7 @@ function InitUIClick() {
     prepareButton.onclick = function () {
         switchLabel(false);
         startPrepareAnimation();
-        setMainDefaultPosition(cameraTargetPosition);
+        //setMainDefaultPosition(cameraTargetPosition);
     }
 
 
@@ -719,7 +719,7 @@ function onDocumentMouseDown(event) {
                     stepindeex = 3;
                     needle1Model.visible = false;
                     needle2Model.visible = false;
-                    orbitcontrol.enabled = false;
+                    //orbitcontrol.enabled = false;
                     mooveSelectedObjAction(ingectionSyringeModel, function () {
                         orbitcontrol.enabled = true;
                         orbitcontrol.autoRotate = true;
@@ -734,7 +734,7 @@ function onDocumentMouseDown(event) {
                     stepindeex = 4;
                     ingectionSyringeModel.visible = false;
                     needle2Model.visible = false;
-                    orbitcontrol.enabled = false;
+                    //orbitcontrol.enabled = false;
                     mooveSelectedObjAction(needle1Model, function () {
                         orbitcontrol.enabled = true;
                         orbitcontrol.autoRotate = true;
@@ -748,7 +748,7 @@ function onDocumentMouseDown(event) {
                     stepindeex = 5;
                     ingectionSyringeModel.visible = false;
                     needle1Model.visible = false;
-                    orbitcontrol.enabled = false;
+                    //orbitcontrol.enabled = false;
                     mooveSelectedObjAction(needle2Model, function () {
                         orbitcontrol.enabled = true;
                         orbitcontrol.autoRotate = true;
@@ -877,10 +877,10 @@ function mooveCameraToTarget() {
             isX = false;
             isY = false;
             isZ = false;
-            if (stepindeex == '1')
-            {
-                orbitcontrol.enabled = true;
-            }
+            //if (stepindeex == '1')
+            //{
+            //    orbitcontrol.enabled = true;
+            //}
             //console.log("camera position in target", camera.position, currentCameraTarget);
         }
 
