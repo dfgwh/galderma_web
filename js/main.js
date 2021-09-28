@@ -958,3 +958,26 @@ function openFullscreen() {
     }
 }
 
+document.addEventListener( 'touchstart', onTouchStart);
+document.addEventListener( 'touchend', onTouchEnd );
+document.addEventListener( 'touchmove', onTouchMove); 
+document.addEventListener( 'wheel', onMouseWheel, {
+    passive: false
+});
+
+function onTouchStart(event)
+{
+    event.preventDefault();
+}
+function onTouchEnd(event)
+{
+    event.preventDefault();
+}
+function onTouchMove(event)
+{
+    event.preventDefault();
+}
+function onMouseWheel(event)
+{
+    event.preventDefault();
+}
