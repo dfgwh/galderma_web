@@ -558,7 +558,7 @@ function render(time) {
             if (timedelta > 2.5 && formcup.visible) {
                 //form.visible = false;
                 swichFormOpacity(true);
-                formcup.visible = false;
+                
 
             }
 
