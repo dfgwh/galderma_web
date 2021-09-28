@@ -101,6 +101,9 @@ init();
 
 function init() {
 
+    
+    InitUIClick();
+
     progressBar = document.getElementById("progress");
     //openFullscreen();
     
@@ -621,6 +624,15 @@ function setMainDefaultPosition(pos, completeCallback) {
 }
 
 function InitUIClick() {
+    document.getElementById("yesFull").onclick = function () {
+        openFullscreen();
+        document.getElementById("fullscrin").style.display = "none";
+    }
+    
+    document.getElementById("noFull").onclick = function () {
+        document.getElementById("fullscrin").style.display = "none";
+    }
+
     let openPackButton = document.getElementById("openPackageButton");
     let backButton = document.getElementById("backButton");
     let prepareButton = document.getElementById("prepareButton");
@@ -946,5 +958,3 @@ function openFullscreen() {
     }
 }
 
-
-InitUIClick();
