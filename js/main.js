@@ -165,7 +165,6 @@ function init() {
                     if (child.name == "FormCap") {
                         formcup = child;
                         formcup.position.z = formcup.position.z + 0.001;
-                        console.log("manual");
                     }
                     if (child.name == "plungerCap") {
                         plangerCap = child;
@@ -413,7 +412,7 @@ function startPrepareAnimation() {
     scene_action.timeScale = 1;
     scene_action.setLoop(THREE.LoopOnce);
     scene_action.clampWhenFinished = true;
-
+    stepindeex = 2;
 
     scene_action.paused = false;
 
@@ -425,6 +424,7 @@ function startPrepareAnimation() {
 
     isAnimate = true;
     isPrepareAnimate = true;
+    orbitcontrol.enabled = false;
 
     document.getElementById("prepareButton").style.display = "none";
     document.getElementById("backButton").style.display = "none";
@@ -454,11 +454,11 @@ function endReversPrepareAnimation() {
     isRebase = false;
 
     startSecondStep();
+    orbitcontrol.enabled = true;
 }
 
 function endPrepareAnimation() {
     document.getElementById("backButton").style.display = "block";
-    stepindeex = 2;
     orbitcontrol.enabled = true;
     orbitcontrol.autoRotate = true;
 }
@@ -621,13 +621,11 @@ function setMainDefaultPosition(pos, completeCallback) {
 }
 
 function InitUIClick() {
-    console.log("init");
     let openPackButton = document.getElementById("openPackageButton");
     let backButton = document.getElementById("backButton");
     let prepareButton = document.getElementById("prepareButton");
 
     openPackButton.onclick = function () {
-        console.log("open");
         orbitcontrol.enabled = false;
         orbitcontrol.autoRotate = false;
         openPackButton.style.display = "none";
@@ -669,12 +667,13 @@ function InitUIClick() {
                     },
                     callback: function () {
                         //console.log("Completed");
-                        orbitcontrol.enabled = false;
+                        
                         orbitcontrol.autoRotate = false;
                         needle1Model.visible = true;
                         needle2Model.visible = true;
                         ingectionSyringeModel.visible = true;
                         startSecondStep();
+                        orbitcontrol.enabled = true;
                     }
                 });
             });
@@ -684,6 +683,7 @@ function InitUIClick() {
     prepareButton.onclick = function () {
         switchLabel(false);
         startPrepareAnimation();
+        setMainDefaultPosition(cameraTargetPosition);
     }
 
 
@@ -719,6 +719,7 @@ function onDocumentMouseDown(event) {
                     stepindeex = 3;
                     needle1Model.visible = false;
                     needle2Model.visible = false;
+                    orbitcontrol.enabled = false;
                     mooveSelectedObjAction(ingectionSyringeModel, function () {
                         orbitcontrol.enabled = true;
                         orbitcontrol.autoRotate = true;
@@ -733,6 +734,7 @@ function onDocumentMouseDown(event) {
                     stepindeex = 4;
                     ingectionSyringeModel.visible = false;
                     needle2Model.visible = false;
+                    orbitcontrol.enabled = false;
                     mooveSelectedObjAction(needle1Model, function () {
                         orbitcontrol.enabled = true;
                         orbitcontrol.autoRotate = true;
@@ -746,6 +748,7 @@ function onDocumentMouseDown(event) {
                     stepindeex = 5;
                     ingectionSyringeModel.visible = false;
                     needle1Model.visible = false;
+                    orbitcontrol.enabled = false;
                     mooveSelectedObjAction(needle2Model, function () {
                         orbitcontrol.enabled = true;
                         orbitcontrol.autoRotate = true;
@@ -874,6 +877,10 @@ function mooveCameraToTarget() {
             isX = false;
             isY = false;
             isZ = false;
+            if (stepindeex == '1')
+            {
+                orbitcontrol.enabled = true;
+            }
             //console.log("camera position in target", camera.position, currentCameraTarget);
         }
 
