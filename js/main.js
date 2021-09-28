@@ -284,7 +284,7 @@ function init() {
 // created base configurations for scene
 function createScene() {
     camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 1, 1000);
-    camera.position.set(-20, 4, - 25);
+    camera.position.set(-35, 20, 17);
     camera.lookAt(0, 1, 0);
     cameraBasePosition = new THREE.Vector3();
     cameraTargetPosition = new THREE.Vector3(3, 8, -17);
