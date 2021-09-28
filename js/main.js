@@ -228,6 +228,10 @@ function init() {
             //earthLabel.visible = false;
 
             //moonLabel.visible = false;
+            /*orbitcontrol.enableZoom = false;
+            orbitcontrol.enableRotate = false;
+            orbitcontrol.enablePan = false;
+            orbitcontrol.screenSpacePanning = false;*/
 
 
             update();
@@ -427,7 +431,7 @@ function startPrepareAnimation() {
 
     isAnimate = true;
     isPrepareAnimate = true;
-    //orbitcontrol.enabled = false;
+    orbitcontrol.enabled = false;
 
     document.getElementById("prepareButton").style.display = "none";
     document.getElementById("backButton").style.display = "none";
@@ -457,7 +461,7 @@ function endReversPrepareAnimation() {
     isRebase = false;
 
     startSecondStep();
-    //orbitcontrol.enabled = true;
+    orbitcontrol.enabled = true;
 }
 
 function endPrepareAnimation() {
@@ -679,13 +683,13 @@ function InitUIClick() {
                     },
                     callback: function () {
                         //console.log("Completed");
-                        orbitcontrol.enabled = false;
+                        //orbitcontrol.enabled = false;
                         orbitcontrol.autoRotate = false;
                         needle1Model.visible = true;
                         needle2Model.visible = true;
                         ingectionSyringeModel.visible = true;
                         startSecondStep();
-                        //orbitcontrol.enabled = true;
+                        orbitcontrol.enabled = true;
                     }
                 });
             });
@@ -695,7 +699,7 @@ function InitUIClick() {
     prepareButton.onclick = function () {
         switchLabel(false);
         startPrepareAnimation();
-        //setMainDefaultPosition(cameraTargetPosition);
+        setMainDefaultPosition(cameraTargetPosition);
     }
 
 
@@ -713,63 +717,11 @@ document.addEventListener('click', onDocumentMouseDown, false);
 
 function onDocumentMouseDown(event) {
     // Click on the screen to create a vector
+    let key = orbitcontrol.enabled;
+    orbitcontrol.enabled = false;
     var vector = new THREE.Vector3((event.clientX / window.innerWidth) * 2 - 1, -(event.clientY / window
         .innerHeight) * 2 + 1, 0.5);
-    vector = vector.unproject(camera); // convert the coordinates of the screen into the coordinate of the three-dimensional scene
-    var raycaster = new THREE.Raycaster(camera.position, vector.sub(camera.position).normalize());
-    var intersects = raycaster.intersectObjects(mesh, true);
-
-    if (stepindeex == '1') {
-        if (intersects.length > 0) {
-            intersects.forEach(element => {
-                if ((element.object.name == "Injector" ||
-                    element.object.name == "InjectorGlass" ||
-                    element.object.name == "plungerCap" ||
-                    element.object.name == "InjectorPlunger")
-                    && stepindeex == '1') {
-                    switchLabel(false);
-                    stepindeex = 3;
-                    needle1Model.visible = false;
-                    needle2Model.visible = false;
-                    //orbitcontrol.enabled = false;
-                    mooveSelectedObjAction(ingectionSyringeModel, function () {
-                        orbitcontrol.enabled = true;
-                        orbitcontrol.autoRotate = true;
-                    });
-                    return;
-                }
-                if ((element.object.name == "Needle" ||
-                    element.object.name == "NeedleCase" ||
-                    element.object.name == "NeedleCap")
-                    && stepindeex == '1') {
-                    switchLabel(false);
-                    stepindeex = 4;
-                    ingectionSyringeModel.visible = false;
-                    needle2Model.visible = false;
-                    //orbitcontrol.enabled = false;
-                    mooveSelectedObjAction(needle1Model, function () {
-                        orbitcontrol.enabled = true;
-                        orbitcontrol.autoRotate = true;
-                    });
-                    return;
-                }
-                if ((element.object.name == "NeedleCase2" ||
-                    element.object.name == "NeedleCase2Glass")
-                    && stepindeex == '1') {
-                    switchLabel(false);
-                    stepindeex = 5;
-                    ingectionSyringeModel.visible = false;
-                    needle1Model.visible = false;
-                    //orbitcontrol.enabled = false;
-                    mooveSelectedObjAction(needle2Model, function () {
-                        orbitcontrol.enabled = true;
-                        orbitcontrol.autoRotate = true;
-                    });
-                    return;
-                }
-            });
-        }
-    }
+    onClickObject(vector, key);
 }
 
 function mooveSelectedObjAction(obj, Objcallback) {
@@ -889,10 +841,10 @@ function mooveCameraToTarget() {
             isX = false;
             isY = false;
             isZ = false;
-            //if (stepindeex == '1')
-            //{
-            //    orbitcontrol.enabled = true;
-            //}
+            if (stepindeex == '1')
+            {
+                orbitcontrol.enabled = true;
+            }
             //console.log("camera position in target", camera.position, currentCameraTarget);
         }
 
@@ -959,16 +911,82 @@ function openFullscreen() {
 }
 
 document.addEventListener( 'touchstart', onTouchStart);
-document.addEventListener( 'touchend', onTouchEnd );
-document.addEventListener( 'touchmove', onTouchMove); 
+/*document.addEventListener( 'touchend', onTouchEnd );
+document.addEventListener( 'touchmove', onTouchMove);*/ 
 document.addEventListener( 'wheel', onMouseWheel, {
     passive: false
 });
 
 function onTouchStart(event)
 {
-    event.preventDefault();
+    //event.preventDefault();
+    let key = orbitcontrol.enabled;
+    orbitcontrol.enabled = false;
+    var vector = new THREE.Vector3((event.touches[0].clientX / window.innerWidth) * 2 - 1, -(event.touches[0].clientY / window
+        .innerHeight) * 2 + 1, 0.5);
+    onClickObject(vector, key);
 }
+
+function onClickObject(vector, key)
+{
+    vector = vector.unproject(camera); // convert the coordinates of the screen into the coordinate of the three-dimensional scene
+    var raycaster = new THREE.Raycaster(camera.position, vector.sub(camera.position).normalize());
+    var intersects = raycaster.intersectObjects(mesh, true);
+    orbitcontrol.enabled = key;
+        //console.log(intersects);
+    if (stepindeex == '1') {
+        if (intersects.length > 0) {
+            intersects.forEach(element => {
+                if ((element.object.name == "Injector" ||
+                    element.object.name == "InjectorGlass" ||
+                    element.object.name == "plungerCap" ||
+                    element.object.name == "InjectorPlunger")
+                    && stepindeex == '1') {
+                    switchLabel(false);
+                    stepindeex = 3;
+                    needle1Model.visible = false;
+                    needle2Model.visible = false;
+                    orbitcontrol.enabled = false;
+                    mooveSelectedObjAction(ingectionSyringeModel, function () {
+                        orbitcontrol.enabled = true;
+                        orbitcontrol.autoRotate = true;
+                    });
+                    return;
+                }
+                if ((element.object.name == "Needle" ||
+                    element.object.name == "NeedleCase" ||
+                    element.object.name == "NeedleCap")
+                    && stepindeex == '1') {
+                    switchLabel(false);
+                    stepindeex = 4;
+                    ingectionSyringeModel.visible = false;
+                    needle2Model.visible = false;
+                    orbitcontrol.enabled = false;
+                    mooveSelectedObjAction(needle1Model, function () {
+                        orbitcontrol.enabled = true;
+                        orbitcontrol.autoRotate = true;
+                    });
+                    return;
+                }
+                if ((element.object.name == "NeedleCase2" ||
+                    element.object.name == "NeedleCase2Glass")
+                    && stepindeex == '1') {
+                    switchLabel(false);
+                    stepindeex = 5;
+                    ingectionSyringeModel.visible = false;
+                    needle1Model.visible = false;
+                    orbitcontrol.enabled = false;
+                    mooveSelectedObjAction(needle2Model, function () {
+                        orbitcontrol.enabled = true;
+                        orbitcontrol.autoRotate = true;
+                    });
+                    return;
+                }
+            });
+        }
+    }
+}
+/*
 function onTouchEnd(event)
 {
     event.preventDefault();
@@ -976,7 +994,7 @@ function onTouchEnd(event)
 function onTouchMove(event)
 {
     event.preventDefault();
-}
+}*/
 function onMouseWheel(event)
 {
     event.preventDefault();
