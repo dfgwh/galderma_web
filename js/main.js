@@ -287,7 +287,7 @@ function createScene() {
     camera.position.set(-20, 4, - 25);
     camera.lookAt(0, 1, 0);
     cameraBasePosition = new THREE.Vector3();
-    cameraTargetPosition = new THREE.Vector3(3, 8, -25);
+    cameraTargetPosition = new THREE.Vector3(3, 8, -17);
 
     document.addEventListener('mousedown', onDocumentMouseDown, false);
 
@@ -317,8 +317,8 @@ function createScene() {
     orbitcontrol.enablePan = false;
     orbitcontrol.dampingFactor = 0.1;
     orbitcontrol.enableDamping = true;
-    orbitcontrol.minDistance = 20;
-    orbitcontrol.maxDistance = 55;
+    orbitcontrol.minDistance = 10;
+    orbitcontrol.maxDistance = 25;
     orbitcontrol.autoRotate = true;
     orbitcontrol.autoRotateSpeed = 0.5;
 
