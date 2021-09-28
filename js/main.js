@@ -156,6 +156,7 @@ function init() {
                     if (child.name == "Form") {
                         form = child;
                         child.material = formMaterial;
+                        form.position.z = form.position.z + 0.001;
                     }
                     if (child.name == "manual") {
                         manual = child;
@@ -163,6 +164,8 @@ function init() {
 
                     if (child.name == "FormCap") {
                         formcup = child;
+                        formcup.position.z = formcup.position.z + 0.001;
+                        console.log("manual");
                     }
                     if (child.name == "plungerCap") {
                         plangerCap = child;
@@ -219,7 +222,6 @@ function init() {
             needle2Model.add( needle2Label );
 
             switchLabel(false);
-
 
             //earthLabel.visible = false;
 
