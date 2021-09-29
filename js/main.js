@@ -300,8 +300,8 @@ function createScene() {
     clock = new THREE.Clock();
 
     scene = new THREE.Scene();
-    scene.background = new THREE.Color("rgb(133,202,237)");
-    scene.fog = new THREE.Fog("rgb(133,202,237)", 20, 80);
+    scene.background = new THREE.Color("#CDE3F3");
+    scene.fog = new THREE.Fog("#CDE3F3", 20, 80);
 
     renderer = new THREE.WebGLRenderer({ antialias: true });
     renderer.setPixelRatio(window.devicePixelRatio);
