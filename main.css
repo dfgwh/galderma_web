@@ -259,22 +259,6 @@ a, button, input, select {
 	height: 60px;
 }
 
-#openPackageButton:hover .blockInButton, #backButton:hover .blockInButton, #prepareButton:hover .blockInButton {
-	background: #A7DFDE;
-}
-#openPackageButton:active .blockInButton, #backButton:active .blockInButton, #prepareButton:active .blockInButton {
-	background: #8CD4D3;
-}
-#openPackageButton:hover .blockInButton img {
-	content: url('images/open_hover_icon.svg');
-}
-#backButton:hover .blockInButton img {
-	content: url('images/back_hover_icon.svg');
-}
-#prepareButton:hover .blockInButton img {
-	content: url('images/prepare_hover_icon.svg');
-}
-
 @media (max-width: 600px) {
 	#prepareButton {
 		right: 10px;
