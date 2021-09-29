@@ -28,7 +28,7 @@ const cubeRenderTarget = new THREE.WebGLCubeRenderTarget(2048);
 const cubeCamera = new THREE.CubeCamera(0.1, 100, cubeRenderTarget);
 
 const glassMaterial = new THREE.MeshPhysicalMaterial({
-    metalness: 0.5,
+    metalness: 0.3,
     roughness: 0.2,
     envMap: cubeRenderTarget.texture,
     //refractionRatio: 0.95,
@@ -310,13 +310,13 @@ function createScene() {
     orbitcontrol.autoRotateSpeed = 0.5;
 
     const color = 0xFFFFFF;
-    const intensity = 1.5;
+    const intensity = 1;
     const light = new THREE.AmbientLight(color, intensity);
     scene.add(light);
 
-    //const hemiLight = new THREE.HemisphereLight( 0xB1E1FF, 0xffffff, 1.5 );
-    //hemiLight.position.set( 0, 20, 0 );
-    //scene.add( hemiLight );
+    /*const hemiLight = new THREE.HemisphereLight( "#CDE3F3", 0xffffff, 0.8 );
+    hemiLight.position.set( 0, 20, 0 );
+    scene.add( hemiLight );*/
     const dirLight = new THREE.DirectionalLight(0xffffff, 1);
     dirLight.position.set(- 3, 10, - 10);
     //dirLight.target.position.set(0, 0, 0);
@@ -335,7 +335,7 @@ function createScene() {
     // ground
     const mesh = new THREE.Mesh(new THREE.PlaneGeometry(2000, 2000), new THREE.MeshPhongMaterial({ color: 0x999999, depthWrite: false }));
     mesh.rotation.x = - Math.PI / 2;
-    mesh.position.y = -30;
+    mesh.position.y = -20;
     mesh.receiveShadow = true;
     scene.add(mesh);
 }

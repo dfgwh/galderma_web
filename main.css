@@ -9,11 +9,11 @@
 	font-style: normal;
 	font-weight: normal;
 	src: local('Segma'),
-		url('fonts/Segma/Segma-Black.ttf') format('ttf'),
-		url('fonts/Segma/Segma-Black.eot') format('eot'),
-		url('fonts/Segma/Segma-Black.svg') format('svg'),
-		url('fonts/Segma/Segma-Black.woff2') format('woff2'), 
-		url('fonts/Segma/Segma-Black.woff') format('woff');
+		url('fonts/Segma/Segma-Medium.ttf') format('ttf'),
+		url('fonts/Segma/Segma-Medium.eot') format('eot'),
+		url('fonts/Segma/Segma-Medium.svg') format('svg'),
+		url('fonts/Segma/Segma-Medium.woff2') format('woff2'), 
+		url('fonts/Segma/Segma-Medium.woff') format('woff');
 }
 
 @font-face {
