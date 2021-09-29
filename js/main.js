@@ -320,14 +320,14 @@ function createScene() {
     orbitcontrol.autoRotateSpeed = 0.5;
 
     const color = 0xFFFFFF;
-    const intensity = 1;
+    const intensity = 1.5;
     const light = new THREE.AmbientLight(color, intensity);
     scene.add(light);
 
     //const hemiLight = new THREE.HemisphereLight( 0xB1E1FF, 0xffffff, 1.5 );
     //hemiLight.position.set( 0, 20, 0 );
     //scene.add( hemiLight );
-    const dirLight = new THREE.DirectionalLight(0xffffff, 1.5);
+    const dirLight = new THREE.DirectionalLight(0xffffff, 1);
     dirLight.position.set(- 3, 10, - 10);
     //dirLight.target.position.set(0, 0, 0);
     dirLight.castShadow = true;
@@ -345,7 +345,7 @@ function createScene() {
     // ground
     const mesh = new THREE.Mesh(new THREE.PlaneGeometry(2000, 2000), new THREE.MeshPhongMaterial({ color: 0x999999, depthWrite: false }));
     mesh.rotation.x = - Math.PI / 2;
-    mesh.position.y = -20;
+    mesh.position.y = -30;
     mesh.receiveShadow = true;
     scene.add(mesh);
 }
