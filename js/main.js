@@ -777,8 +777,8 @@ function animateVector3(vectorToAnimate, target, options) {
 }
 
 let deltaX, isX = false, deltaY, isY = false, deltaZ, isZ = false;
-let cameraSpeed = 0.1;
-let border = 0.05;
+let cameraSpeed = 0.2;
+let border = 0.2;
 function mooveCameraToTarget() {
     if (isMoovingCamera) {
         deltaX = camera.position.x - currentCameraTarget.x;
@@ -839,7 +839,7 @@ function mooveCameraToTarget() {
             {
                 orbitcontrol.enabled = true;
             }
-            //console.log("camera position in target", camera.position, currentCameraTarget);
+            console.log("camera position in target", camera.position, currentCameraTarget);
         }
 
     }
