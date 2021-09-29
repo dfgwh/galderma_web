@@ -448,7 +448,7 @@ function reversPrepareAnimation() {
     isPrepareAnimate = true;
 
     scene_action.paused = false;
-
+    document.getElementById("full_injector_info").style.display = "none";
     document.getElementById("backButton").style.display = "none";
 }
 
@@ -466,6 +466,7 @@ function endReversPrepareAnimation() {
 
 function endPrepareAnimation() {
     document.getElementById("backButton").style.display = "block";
+    document.getElementById("full_injector_info").style.display = "block";
     orbitcontrol.enabled = true;
     orbitcontrol.autoRotate = true;
 }
