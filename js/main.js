@@ -654,7 +654,7 @@ function InitUIClick() {
             backButton.style.display = "none";
             prepareButton.style.display = "none";
             switchLabel(false);
-            setMainDefaultPosition(cameraBasePosition, reversOpenPackageAnimation);
+            setMainDefaultPosition(cameraBasePosition);
             //camera.position.set( -7, 4, - 5 );
             stepindeex = 0;
         }
@@ -838,6 +838,10 @@ function mooveCameraToTarget() {
             if (stepindeex == '1')
             {
                 orbitcontrol.enabled = true;
+            }
+            if (stepindeex == '0' && isRebase)
+            {
+                reversOpenPackageAnimation();
             }
             console.log("camera position in target", camera.position, currentCameraTarget);
         }
