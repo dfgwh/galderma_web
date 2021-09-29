@@ -21,7 +21,7 @@ let currentCameraTarget;
 let model, mainmodel, ingectionSyringeModel, needle1Model,
     needle2Model, box, form, manual, formcup,
     plangerCap, needleCase, needleCap, selectedObject, armatur;
-let basePos, baseRot, baseBoxPos, baseSelectedRot;
+let basePos, baseBoxPos, baseSelectedRot;
 let injectorGlass;
 const cubeRenderTarget = new THREE.WebGLCubeRenderTarget(2048);
 const cubeCamera = new THREE.CubeCamera(0.1, 100, cubeRenderTarget);
@@ -89,7 +89,7 @@ init();
 
 function init() {
 
-    
+
     InitUIClick();
 
     progressBar = document.getElementById("progress");
@@ -187,29 +187,29 @@ function init() {
             cameraBasePosition.y = camera.position.y;
             cameraBasePosition.z = camera.position.z;
 
-            const injectorImg = document.createElement( 'img' );
+            const injectorImg = document.createElement('img');
             injectorImg.className = 'label';
             injectorImg.src = 'images/label_injector.svg';
             injectorImg.style.marginTop = '-1em';
-            injectorLabel = new CSS2DObject( injectorImg );
-            injectorLabel.position.set( 0,0,0);
-            injectorGlass.add( injectorLabel );
+            injectorLabel = new CSS2DObject(injectorImg);
+            injectorLabel.position.set(0, 0, 0);
+            injectorGlass.add(injectorLabel);
 
-            const needle1Img = document.createElement( 'img' );
+            const needle1Img = document.createElement('img');
             needle1Img.className = 'label';
             needle1Img.src = 'images/label_needle.svg';
             needle1Img.style.marginTop = '-1em';
-            needle1Label = new CSS2DObject( needle1Img );
-            needle1Label.position.set( 0,0,0);
-            needle1Model.add( needle1Label );
+            needle1Label = new CSS2DObject(needle1Img);
+            needle1Label.position.set(0, 0, 0);
+            needle1Model.add(needle1Label);
 
-            const needle2Img = document.createElement( 'img' );
+            const needle2Img = document.createElement('img');
             needle2Img.className = 'label';
             needle2Img.src = 'images/label_needle.svg';
             needle2Img.style.marginTop = '-1em';
-            needle2Label = new CSS2DObject( needle2Img );
-            needle2Label.position.set( 0,0,0);
-            needle2Model.add( needle2Label );
+            needle2Label = new CSS2DObject(needle2Img);
+            needle2Label.position.set(0, 0, 0);
+            needle2Model.add(needle2Label);
 
             switchLabel(false);
 
@@ -229,7 +229,7 @@ function init() {
     function onWindowResize() {
         camera.aspect = window.innerWidth / window.innerHeight;
         camera.updateProjectionMatrix();
-        labelRenderer.setSize( window.innerWidth, window.innerHeight );
+        labelRenderer.setSize(window.innerWidth, window.innerHeight);
         renderer.setSize(window.innerWidth, window.innerHeight);
     }
 
@@ -256,7 +256,7 @@ function init() {
         requestAnimationFrame(animate);
         orbitcontrol.update();
         TWEEN.update();
-        labelRenderer.render( scene, camera );
+        labelRenderer.render(scene, camera);
         renderer.render(scene, camera);
 
 
@@ -289,10 +289,10 @@ function createScene() {
     container.appendChild(renderer.domElement);
 
     labelRenderer = new CSS2DRenderer();
-    labelRenderer.setSize( window.innerWidth, window.innerHeight );
+    labelRenderer.setSize(window.innerWidth, window.innerHeight);
     labelRenderer.domElement.style.position = 'absolute';
     labelRenderer.domElement.style.top = '0px';
-    labelRendererEl.appendChild( labelRenderer.domElement );
+    labelRendererEl.appendChild(labelRenderer.domElement);
 
     //OrbitControls
     orbitcontrol = new OrbitControls(camera, labelRenderer.domElement);
@@ -402,7 +402,7 @@ function startPrepareAnimation() {
 
     scene_action.paused = false;
 
-    
+
     needle2Model.visible = false;
     plangerCap.visible = false;
     needleCase.visible = false;
@@ -550,8 +550,7 @@ function render(time) {
                 formcup.visible = false;
             }
 
-            if (timedelta > 6.625 && manual.visible)
-            {
+            if (timedelta > 6.625 && manual.visible) {
                 manual.visible = false;
             }
 
@@ -640,39 +639,36 @@ function InitUIClick() {
             backButton.style.display = "none";
             document.getElementById("needle_info").style.display = "none";
             document.getElementById("injector_info").style.display = "none";
-
-            selectedObject.rotation.x = baseRot.x;
-            selectedObject.rotation.y = baseRot.y;
-            selectedObject.rotation.z = baseRot.z;
             switchOrbitController(false);
             orbitcontrol.autoRotate = false;
-            setMainDefaultPosition(cameraTargetPosition, function () {
-                animateVector3(selectedObject.rotation, baseSelectedRot,{
-                    duration: 500,
-                    //easing : TWEEN.Easing.Quadratic.InOut,
-                    update: function (d) {
-                        //console.log("Updating: " + d);
-                    },
-                    callback: function () {
-                        //if (Objcallback) Objcallback();
-                        animateVector3(selectedObject.position, basePos, {
-                            duration: 500,
-                            //easing : TWEEN.Easing.Quadratic.InOut,
-                            update: function (d) {
-                                //console.log("Updating: " + d);
-                            },
-                            callback: function () {
-                                //console.log("Completed");
-                                orbitcontrol.autoRotate = false;
-                                needle1Model.visible = true;
-                                needle2Model.visible = true;
-                                ingectionSyringeModel.visible = true;
+
+            animateVector3(selectedObject.rotation, baseSelectedRot, {
+                duration: 2000,
+                //easing : TWEEN.Easing.Quadratic.InOut,
+                update: function (d) {
+                    //console.log("Updating: " + d);
+                },
+                callback: function () {
+                    //console.log("Completed");
+                    animateVector3(selectedObject.position, basePos, {
+                        duration: 2000,
+                        //easing : TWEEN.Easing.Quadratic.InOut,
+                        update: function (d) {
+                            //console.log("Updating: " + d);
+                        },
+                        callback: function () {
+                            //console.log("Completed");
+                            orbitcontrol.autoRotate = false;
+                            needle1Model.visible = true;
+                            needle2Model.visible = true;
+                            ingectionSyringeModel.visible = true;
+                            setMainDefaultPosition(cameraTargetPosition, function () {
                                 startSecondStep();
                                 switchOrbitController(true);
-                            }
-                        });
-                    }
-                });
+                            });
+                        }
+                    });
+                }
             });
 
         }
@@ -687,8 +683,7 @@ function InitUIClick() {
 }
 
 
-function switchLabel(key)
-{
+function switchLabel(key) {
     injectorLabel.visible = key;
     needle1Label.visible = key;
     needle2Label.visible = key;
@@ -713,13 +708,9 @@ function mooveSelectedObjAction(obj, Objcallback) {
     basePos.x = obj.position.x;
     basePos.y = obj.position.y;
     basePos.z = obj.position.z;
-    baseRot = new THREE.Vector3();
-    baseRot.x = obj.rotation.x;
-    baseRot.y = obj.rotation.y;
-    baseRot.z = obj.rotation.z;
     selectedObject = obj;
     animateVector3(selectedObject.position, target, {
-        duration: 1000,
+        duration: 2000,
         //easing : TWEEN.Easing.Quadratic.InOut,
         update: function (d) {
             //console.log("Updating: " + d);
@@ -738,9 +729,9 @@ function mooveSelectedObjAction(obj, Objcallback) {
             baseSelectedRot.x = selectedObject.rotation.x;
             baseSelectedRot.y = selectedObject.rotation.y;
             baseSelectedRot.z = selectedObject.rotation.z;
-            let target_rot = new THREE.Vector3(selectedObject.rotation.x + 0.2,selectedObject.rotation.y,selectedObject.rotation.z)
-            animateVector3(selectedObject.rotation, target_rot,{
-                duration: 500,
+            let target_rot = new THREE.Vector3(selectedObject.rotation.x + 0.2, selectedObject.rotation.y, selectedObject.rotation.z);
+            animateVector3(selectedObject.rotation, target_rot, {
+                duration: 2000,
                 //easing : TWEEN.Easing.Quadratic.InOut,
                 update: function (d) {
                     //console.log("Updating: " + d);
@@ -757,7 +748,7 @@ function animateVector3(vectorToAnimate, target, options) {
     // get targets from options or set to defaults
     var to = target || THREE.Vector3(),
         easing = options.easing || TWEEN.Easing.Quadratic.In,
-        duration = /*options.duration ||*/ 2000;
+        duration = options.duration || 2000;
     // create the tween
     var tweenVector3 = new TWEEN.Tween(vectorToAnimate)
         .to({ x: to.x, y: to.y, z: to.z, }, duration)
@@ -783,8 +774,7 @@ function mooveCameraToTarget() {
     if (isMoovingCamera) {
         deltaX = camera.position.x - currentCameraTarget.x;
 
-        if (!isX && isZ)
-        {
+        if (!isX && isZ) {
             if (!(deltaX < border && deltaX > -border)) {
                 if (camera.position.x > currentCameraTarget.x) {
                     camera.position.x -= cameraSpeed;
@@ -799,8 +789,7 @@ function mooveCameraToTarget() {
 
         deltaY = camera.position.y - currentCameraTarget.y;
 
-        if (!isY && isZ)
-        {
+        if (!isY && isZ) {
             if (!(deltaY < border && deltaY > -border)) {
                 if (camera.position.y > currentCameraTarget.y) {
                     camera.position.y -= cameraSpeed;
@@ -814,8 +803,7 @@ function mooveCameraToTarget() {
 
         deltaZ = camera.position.z - currentCameraTarget.z;
 
-        if (!isZ)
-        {
+        if (!isZ) {
             if (!(deltaZ < border && deltaZ > -border)) {
                 if (camera.position.z > currentCameraTarget.z) {
                     camera.position.z -= cameraSpeed;
@@ -832,12 +820,10 @@ function mooveCameraToTarget() {
             isX = false;
             isY = false;
             isZ = false;
-            if (stepindeex == '1')
-            {
+            if (stepindeex == '1') {
                 switchOrbitController(true);
             }
-            if (stepindeex == '0' && isRebase)
-            {
+            if (stepindeex == '0' && isRebase) {
                 reversOpenPackageAnimation();
             }
         }
@@ -845,8 +831,8 @@ function mooveCameraToTarget() {
     }
 }
 // key - true выключть объект
-function swichFormOpacity(key) {	
-    form.transparent = true;	
+function swichFormOpacity(key) {
+    form.transparent = true;
     if (key)
         isFormOpacityIn = true;
     else {
@@ -870,24 +856,23 @@ function opacityMeshesStatus() {
 
     if (isFormOpacityOut) {
         if (form.material.opacity < 0.4) {
-            form.material.opacity += opacityDelay*0.1;
+            form.material.opacity += opacityDelay * 0.1;
         }
         else {
             isFormOpacityOut = false;
             form.material.opacity = 0.4;
         }
     }
-    
+
 
 }
 
-document.addEventListener( 'touchstart', onTouchStart);
-document.addEventListener( 'wheel', onMouseWheel, {
+document.addEventListener('touchstart', onTouchStart);
+document.addEventListener('wheel', onMouseWheel, {
     passive: false
 });
 
-function onTouchStart(event)
-{
+function onTouchStart(event) {
     let key = orbitcontrol.enabled;
     orbitcontrol.enabled = false;
     var vector = new THREE.Vector3((event.touches[0].clientX / window.innerWidth) * 2 - 1, -(event.touches[0].clientY / window
@@ -895,8 +880,7 @@ function onTouchStart(event)
     onClickObject(vector, key);
 }
 
-function onClickObject(vector, key)
-{
+function onClickObject(vector, key) {
     vector = vector.unproject(camera); // convert the coordinates of the screen into the coordinate of the three-dimensional scene
     var raycaster = new THREE.Raycaster(camera.position, vector.sub(camera.position).normalize());
     var intersects = raycaster.intersectObjects(mesh, true);
@@ -954,12 +938,10 @@ function onClickObject(vector, key)
     }
 }
 
-function switchOrbitController(key)
-{
+function switchOrbitController(key) {
     orbitcontrol.enableZoom = key;
     orbitcontrol.enableRotate = key;
 }
-function onMouseWheel(event)
-{
+function onMouseWheel(event) {
     event.preventDefault();
 }
