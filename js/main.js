@@ -11,6 +11,7 @@ import {
 let scene, renderer, camera, orbitcontrol;
 let cameraBasePosition;
 let cameraTargetPosition;
+let cameraSelectedObjectPosition;
 let isMoovingCamera;
 let currentCameraTarget;
 
@@ -273,6 +274,7 @@ function createScene() {
     camera.lookAt(0, 1, 0);
     cameraBasePosition = new THREE.Vector3();
     cameraTargetPosition = new THREE.Vector3(3, 8, -17);
+    cameraSelectedObjectPosition = new THREE.Vector3(3, 8, -10);
 
     document.addEventListener('mousedown', onDocumentMouseDown, false);
 
@@ -709,6 +711,7 @@ function mooveSelectedObjAction(obj, Objcallback) {
     basePos.y = obj.position.y;
     basePos.z = obj.position.z;
     selectedObject = obj;
+
     animateVector3(selectedObject.position, target, {
         duration: 2000,
         //easing : TWEEN.Easing.Quadratic.InOut,
@@ -717,18 +720,19 @@ function mooveSelectedObjAction(obj, Objcallback) {
         },
         callback: function () {
             //console.log("Completed");
-            document.getElementById("backButton").style.display = "block";
-            if (stepindeex == '3') {
-                document.getElementById("injector_info").style.display = "block";
-            }
-            else {
-                document.getElementById("needle_info").style.display = "block";
-            }
-
             if (Objcallback) Objcallback();
             baseSelectedRot.x = selectedObject.rotation.x;
             baseSelectedRot.y = selectedObject.rotation.y;
             baseSelectedRot.z = selectedObject.rotation.z;
+            setMainDefaultPosition(cameraSelectedObjectPosition, function () {
+                document.getElementById("backButton").style.display = "block";
+                if (stepindeex == '3') {
+                    document.getElementById("injector_info").style.display = "block";
+                }
+                else {
+                    document.getElementById("needle_info").style.display = "block";
+                }            
+            });
             let target_rot = new THREE.Vector3(selectedObject.rotation.x + 0.2, selectedObject.rotation.y, selectedObject.rotation.z);
             animateVector3(selectedObject.rotation, target_rot, {
                 duration: 2000,
@@ -738,10 +742,12 @@ function mooveSelectedObjAction(obj, Objcallback) {
                 },
                 callback: function () {
                     //if (Objcallback) Objcallback();
+
                 }
             });
         }
     });
+
 }
 function animateVector3(vectorToAnimate, target, options) {
     options = options || {};
