@@ -73,25 +73,13 @@ let progressBar;
 let labelRenderer;
 let injectorLabel, needle1Label, needle2Label;
 const labelRendererEl = document.getElementById("renderer");
-const textureLoader = new THREE.TextureLoader();
 
 // app field
 
 let isLoader = true;
 const container = document.querySelector('.container');
-let width = window.innerWidth;
-let height = window.innerHeight;
 var mesh = [];
 let stepindeex = 0;
-let mouse = {
-    'position': { 'x': 0, 'y': 0 },
-    'speed': { 'x': 0, 'y': 0 }
-};
-let my_touch = {
-    'start_position': { 'x': 0, 'y': 0 },
-    'position': { 'x': 0, 'y': 0 }
-}
-let isMouseDown = false;
 
 
 
@@ -555,7 +543,6 @@ function render(time) {
 
             }
             if (timedelta > 2.5 && !isFormOpacityIn) {
-                //form.visible = false;
                 swichFormOpacity(true);
             }
 
@@ -622,14 +609,6 @@ function setMainDefaultPosition(pos, completeCallback) {
 }
 
 function InitUIClick() {
-    document.getElementById("yesFull").onclick = function () {
-        openFullscreen();
-        document.getElementById("fullscrin").style.display = "none";
-    }
-    
-    document.getElementById("noFull").onclick = function () {
-        document.getElementById("fullscrin").style.display = "none";
-    }
 
     let openPackButton = document.getElementById("openPackageButton");
     let backButton = document.getElementById("backButton");
@@ -655,7 +634,6 @@ function InitUIClick() {
             prepareButton.style.display = "none";
             switchLabel(false);
             setMainDefaultPosition(cameraBasePosition);
-            //camera.position.set( -7, 4, - 5 );
             stepindeex = 0;
         }
         if (stepindeex == '3' || stepindeex == '4' || stepindeex == '5') {
@@ -685,7 +663,6 @@ function InitUIClick() {
                             },
                             callback: function () {
                                 //console.log("Completed");
-                                //orbitcontrol.enabled = false;
                                 orbitcontrol.autoRotate = false;
                                 needle1Model.visible = true;
                                 needle2Model.visible = true;
@@ -720,7 +697,6 @@ function switchLabel(key)
 document.addEventListener('click', onDocumentMouseDown, false);
 
 function onDocumentMouseDown(event) {
-    // Click on the screen to create a vector
     let key = orbitcontrol.enabled;
     orbitcontrol.enabled = false;
     var vector = new THREE.Vector3((event.clientX / window.innerWidth) * 2 - 1, -(event.clientY / window
@@ -817,7 +793,6 @@ function mooveCameraToTarget() {
                 }
             } else {
                 isX = true;
-                //console.log("Camera position x - success",camera.position.x);
             }
         }
 
@@ -834,7 +809,6 @@ function mooveCameraToTarget() {
                 }
             } else {
                 isY = true;
-                //console.log("Camera position y - success");
             }
         }
 
@@ -850,7 +824,6 @@ function mooveCameraToTarget() {
                 }
             } else {
                 isZ = true;
-                //console.log("Camera position z - success");
             }
         }
 
@@ -867,7 +840,6 @@ function mooveCameraToTarget() {
             {
                 reversOpenPackageAnimation();
             }
-            //console.log("camera position in target", camera.position, currentCameraTarget);
         }
 
     }
@@ -888,59 +860,34 @@ function opacityMeshesStatus() {
     if (isFormOpacityIn) {
         if (form.material.opacity > 0) {
             form.material.opacity -= opacityDelay;
-            //formcup.material.opacity -= opacityDelay;
         }
         else {
             isFormOpacityIn = false;
             form.visible = false;
-            //injectorGlass.material = glassMaterial;
             form.material.opacity = 0;
-            //injectorGlass.material = glassMaterial;
-            //ormcup.material.opacity = 1;
         }
     }
 
     if (isFormOpacityOut) {
         if (form.material.opacity < 0.4) {
-            //injectorGlass.material = glassInFormMaterial;
             form.material.opacity += opacityDelay*0.1;
-            //formcup.material.opacity -= opacityDelay;
         }
         else {
             isFormOpacityOut = false;
-            formcup.visible = true;
             form.material.opacity = 0.4;
-            //ormcup.material.opacity = 1;
         }
     }
     
 
 }
 
-/* Просмотр в полноэкранном режиме */
-function openFullscreen() {
-    var elem = document.documentElement;
-    if (elem.requestFullscreen != null) {
-        elem.requestFullscreen();
-    } else if (elem.mozRequestFullScreen) { /* Firefox */
-        elem.mozRequestFullScreen();
-    } else if (elem.webkitRequestFullscreen) { /* Chrome, Safari and Opera */
-        elem.webkitRequestFullscreen();
-    } else if (elem.msRequestFullscreen) { /* IE/Edge */
-        elem.msRequestFullscreen();
-    }
-}
-
 document.addEventListener( 'touchstart', onTouchStart);
-/*document.addEventListener( 'touchend', onTouchEnd );
-document.addEventListener( 'touchmove', onTouchMove);*/ 
 document.addEventListener( 'wheel', onMouseWheel, {
     passive: false
 });
 
 function onTouchStart(event)
 {
-    //event.preventDefault();
     let key = orbitcontrol.enabled;
     orbitcontrol.enabled = false;
     var vector = new THREE.Vector3((event.touches[0].clientX / window.innerWidth) * 2 - 1, -(event.touches[0].clientY / window
@@ -954,7 +901,6 @@ function onClickObject(vector, key)
     var raycaster = new THREE.Raycaster(camera.position, vector.sub(camera.position).normalize());
     var intersects = raycaster.intersectObjects(mesh, true);
     orbitcontrol.enabled = key;
-        //console.log(intersects);
     if (stepindeex == '1') {
         if (intersects.length > 0) {
             intersects.forEach(element => {
@@ -1013,15 +959,6 @@ function switchOrbitController(key)
     orbitcontrol.enableZoom = key;
     orbitcontrol.enableRotate = key;
 }
-/*
-function onTouchEnd(event)
-{
-    event.preventDefault();
-}
-function onTouchMove(event)
-{
-    event.preventDefault();
-}*/
 function onMouseWheel(event)
 {
     event.preventDefault();
