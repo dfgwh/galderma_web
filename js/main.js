@@ -225,15 +225,6 @@ function init() {
 
             switchLabel(false);
 
-            //earthLabel.visible = false;
-
-            //moonLabel.visible = false;
-            /*orbitcontrol.enableZoom = false;
-            orbitcontrol.enableRotate = false;
-            orbitcontrol.enablePan = false;
-            orbitcontrol.screenSpacePanning = false;*/
-
-
             update();
         },
         (xhr) => {
@@ -563,11 +554,13 @@ function render(time) {
                 });
 
             }
-            if (timedelta > 2.5 && formcup.visible) {
+            if (timedelta > 2.5 && !isFormOpacityIn) {
                 //form.visible = false;
                 swichFormOpacity(true);
-                
+            }
 
+            if (timedelta > 5.0 && formcup.visible) {
+                formcup.visible = false;
             }
 
             if (timedelta > 6.625 && manual.visible)
@@ -872,7 +865,6 @@ function opacityMeshesStatus() {
         else {
             isFormOpacityIn = false;
             form.visible = false;
-            formcup.visible = false;
             //injectorGlass.material = glassMaterial;
             form.material.opacity = 0;
             //injectorGlass.material = glassMaterial;
