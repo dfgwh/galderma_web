@@ -422,7 +422,7 @@ function startPrepareAnimation() {
 
     isAnimate = true;
     isPrepareAnimate = true;
-    orbitcontrol.enabled = false;
+    switchOrbitController(false);
 
     document.getElementById("prepareButton").style.display = "none";
     document.getElementById("backButton").style.display = "none";
@@ -452,13 +452,13 @@ function endReversPrepareAnimation() {
     isRebase = false;
 
     startSecondStep();
-    orbitcontrol.enabled = true;
+    switchOrbitController(true);
 }
 
 function endPrepareAnimation() {
     document.getElementById("backButton").style.display = "block";
     document.getElementById("full_injector_info").style.display = "block";
-    orbitcontrol.enabled = true;
+    switchOrbitController(true);
     orbitcontrol.autoRotate = true;
 }
 
@@ -531,7 +531,7 @@ function render(time) {
                 isRebase = false;
                 isBoxAnimation = false;
                 scene_action.paused = true;
-                orbitcontrol.enabled = true;
+                switchOrbitController(true);
                 orbitcontrol.autoRotate = true;
 
                 document.getElementById("openPackageButton").style.display = "block";
@@ -636,14 +636,14 @@ function InitUIClick() {
     let prepareButton = document.getElementById("prepareButton");
 
     openPackButton.onclick = function () {
-        orbitcontrol.enabled = false;
+        switchOrbitController(false);
         orbitcontrol.autoRotate = false;
         openPackButton.style.display = "none";
         setMainDefaultPosition(cameraBasePosition, startOpenPackageAnimation);
     }
 
     backButton.onclick = function () {
-        orbitcontrol.enabled = false;
+        switchOrbitController(false);
         orbitcontrol.autoRotate = false;
         if (stepindeex == '2') {
             isRebase = true;
@@ -666,7 +666,7 @@ function InitUIClick() {
             selectedObject.rotation.x = baseRot.x;
             selectedObject.rotation.y = baseRot.y;
             selectedObject.rotation.z = baseRot.z;
-            orbitcontrol.enabled = false;
+            switchOrbitController(false);
             orbitcontrol.autoRotate = false;
             setMainDefaultPosition(cameraTargetPosition, function () {
                 animateVector3(selectedObject.rotation, baseSelectedRot,{
@@ -691,7 +691,7 @@ function InitUIClick() {
                                 needle2Model.visible = true;
                                 ingectionSyringeModel.visible = true;
                                 startSecondStep();
-                                orbitcontrol.enabled = true;
+                                switchOrbitController(true);
                             }
                         });
                     }
@@ -861,7 +861,7 @@ function mooveCameraToTarget() {
             isZ = false;
             if (stepindeex == '1')
             {
-                orbitcontrol.enabled = true;
+                switchOrbitController(true);
             }
             if (stepindeex == '0' && isRebase)
             {
@@ -967,9 +967,9 @@ function onClickObject(vector, key)
                     stepindeex = 3;
                     needle1Model.visible = false;
                     needle2Model.visible = false;
-                    orbitcontrol.enabled = false;
+                    switchOrbitController(false);
                     mooveSelectedObjAction(ingectionSyringeModel, function () {
-                        orbitcontrol.enabled = true;
+                        switchOrbitController(true);
                         orbitcontrol.autoRotate = true;
                     });
                     return;
@@ -982,9 +982,9 @@ function onClickObject(vector, key)
                     stepindeex = 4;
                     ingectionSyringeModel.visible = false;
                     needle2Model.visible = false;
-                    orbitcontrol.enabled = false;
+                    switchOrbitController(false);
                     mooveSelectedObjAction(needle1Model, function () {
-                        orbitcontrol.enabled = true;
+                        switchOrbitController(true);
                         orbitcontrol.autoRotate = true;
                     });
                     return;
@@ -996,9 +996,9 @@ function onClickObject(vector, key)
                     stepindeex = 5;
                     ingectionSyringeModel.visible = false;
                     needle1Model.visible = false;
-                    orbitcontrol.enabled = false;
+                    switchOrbitController(false);
                     mooveSelectedObjAction(needle2Model, function () {
-                        orbitcontrol.enabled = true;
+                        switchOrbitController(true);
                         orbitcontrol.autoRotate = true;
                     });
                     return;
@@ -1006,6 +1006,12 @@ function onClickObject(vector, key)
             });
         }
     }
+}
+
+function switchOrbitController(key)
+{
+    orbitcontrol.enableZoom = key;
+    orbitcontrol.enableRotate = key;
 }
 /*
 function onTouchEnd(event)
