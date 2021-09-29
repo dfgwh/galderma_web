@@ -2,6 +2,44 @@
     margin: 0;
     padding: 0;
 }
+
+/* Обычный */
+@font-face {
+	font-family: 'Segma';
+	font-style: normal;
+	font-weight: normal;
+	src: local('Segma'),
+		url('fonts/Segma/Segma-Black.ttf') format('ttf'),
+		url('fonts/Segma/Segma-Black.eot') format('eot'),
+		url('fonts/Segma/Segma-Black.svg') format('svg'),
+		url('fonts/Segma/Segma-Black.woff2') format('woff2'), 
+		url('fonts/Segma/Segma-Black.woff') format('woff');
+}
+
+@font-face {
+	font-family: 'Segma-bold';
+	font-style: normal;
+	font-weight: bold;
+	src: local('Segma'),
+		url('fonts/Segma/Segma-Bold.ttf') format('ttf'),
+		url('fonts/Segma/Segma-Bold.eot') format('eot'),
+		url('fonts/Segma/Segma-Bold.svg') format('svg'),
+		url('fonts/Segma/Segma-Black.woff2') format('woff2'), 
+		url('fonts/Segma/Segma-Black.woff') format('woff');
+}
+
+@font-face {
+	font-family: 'Segma-semi';
+	font-style: normal;
+	font-weight: normal;
+	src: local('Segma'),
+		url('fonts/Segma/Segma-SemiBold.ttf') format('ttf'),
+		url('fonts/Segma/Segma-SemiBold.eot') format('eot'),
+		url('fonts/Segma/Segma-SemiBold.svg') format('svg'),
+		url('fonts/Segma/Segma-SemiBold.woff2') format('woff2'), 
+		url('fonts/Segma/Segma-SemiBold.woff') format('woff');
+}
+
 .container {
     width:100%;
     height:100%;
@@ -12,7 +50,9 @@ body {
 	color: #000;
 	overflow: hidden;
     font-size: .8em;
-    font-family: 'Segma',sans-serif;
+    font-family: 'Segma', sans-serif;
+	font-style: normal;
+	font-weight: normal;
 	line-height: 24px;
 	overscroll-behavior: none;
 }
@@ -84,7 +124,7 @@ a, button, input, select {
 	position: absolute;
 	width: 170px;
 	height: 40px;
-	right: 5px;
+	right: 10px;
 	top: 5px;
 	
 	/*font-family: Segma;*/
@@ -99,32 +139,17 @@ a, button, input, select {
 #openPackageButton .blockInButton img {
 	position: absolute;
 	left: 10px;
-	height: 30px;
-	top: 5px;
+	height: 20px;
+	top: 8px;
 	/*bottom: 10px;
 	/*border: 6px solid #A7DFDE;
 	/*transform: rotate(-90deg);*/
 }
 
-#backButton .blockInButton span {
-	position: absolute;
-	/*left: 42.76%;*/
-	right: 5px;
-	top: 20.11%;
-	bottom: 25.64%;
-	/*font-family: Segma;*/
-	font-style: normal;
-	font-weight: 600;
-	font-size: 21px;
-	line-height: 25px;
-	text-align: center;
-	color: #020828;
-}
-
 #backButton .blockInButton img {
 	position: absolute;
-	left: 10px;
-	height: 20px;
+	left: 8px;
+	height: 18px;
 	top: 10px;
 	/*border: 6px solid #A7DFDE;
 	/*transform: rotate(-90deg);*/
@@ -132,9 +157,9 @@ a, button, input, select {
 
 #prepareButton {
 	position: absolute;
-	width: 130px;
+	width: 160px;
 	height: 50px;
-	left: calc(50% - 65px);
+	left: calc(50% - 80px);
 	bottom: 5px;
 	border: 2px solid #A7DFDE;
 	box-sizing: border-box;
@@ -144,33 +169,28 @@ a, button, input, select {
 	display: none;
 }
 
-#prepareButton .blockInButton span {
+#backButton .blockInButton span, #prepareButton .blockInButton span {
 	position: absolute;
-	/*left: 42.76%;*/
-	right: 5px;
-	top: 20.11%;
-	bottom: 25.64%;
-	/*font-family: Segma;*/
+	height: 40px;
+	right: 10px;
+	top: 4px;
 	font-style: normal;
 	font-weight: 600;
 	font-size: 21px;
-	line-height: 25px;
+	line-height: 30px;
 	text-align: center;
 	color: #020828;
 }
 
 #prepareButton .blockInButton img {
 	position: absolute;
+	height: 30px;
 	left: 10px;
-	height: 20px;
-	top: 10px;
-	/*border: 6px solid #A7DFDE;
-	/*transform: rotate(-90deg);*/
+	top: 2px;
 }
 
 .annotationLabel {
 	color: #ffffff;
-	font-family: monospace;
 	pointer-events: none;
 	font-size: 17px;
 }
@@ -220,6 +240,8 @@ a, button, input, select {
 	top: 20px;
 	left: 20px;
 	display: none;
+	font-family: 'Segma-semi';
+	line-height: 3em;
 }
 .post_info img {
 	width: 300px;
@@ -228,7 +250,7 @@ a, button, input, select {
 }
 .post_info span {
 	color: #FFFFFF;
-	font-size: 40px;
+	font-size: 50px;
 }
 .label {
 	font-family: sans-serif;
@@ -304,3 +326,27 @@ a, button, input, select {
 	text-align: center;
 
 }
+
+#openPackageButton:hover .blockInButton, #backButton:hover .blockInButton, #prepareButton:hover .blockInButton {
+	background: #A7DFDE;
+}
+#openPackageButton:active .blockInButton, #backButton:active .blockInButton, #prepareButton:active .blockInButton {
+	background: #8CD4D3;
+}
+#openPackageButton:hover .blockInButton img {
+	content: url('images/open_hover_icon.svg');
+}
+#backButton:hover .blockInButton img {
+	content: url('images/back_hover_icon.svg');
+}
+#prepareButton:hover .blockInButton img {
+	content: url('images/prepare_hover_icon.svg');
+}
+
+@media (max-width: 600px) {
+	#prepareButton {
+		right: 10px;
+		left: auto;
+	}
+}
+	
