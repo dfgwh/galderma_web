@@ -21,7 +21,7 @@ let currentCameraTarget;
 let model, mainmodel, ingectionSyringeModel, needle1Model,
     needle2Model, box, form, manual, formcup,
     plangerCap, needleCase, needleCap, selectedObject, armatur;
-let basePos, baseRot, baseBoxPos;
+let basePos, baseRot, baseBoxPos, baseSelectedRot;
 let injectorGlass;
 const cubeRenderTarget = new THREE.WebGLCubeRenderTarget(2048);
 const cubeCamera = new THREE.CubeCamera(0.1, 100, cubeRenderTarget);
@@ -106,7 +106,7 @@ function init() {
 
     progressBar = document.getElementById("progress");
     //openFullscreen();
-    
+    baseSelectedRot = new THREE.Vector3();
 
     createScene();
     //openFullscreen();
@@ -669,21 +669,31 @@ function InitUIClick() {
             orbitcontrol.enabled = false;
             orbitcontrol.autoRotate = false;
             setMainDefaultPosition(cameraTargetPosition, function () {
-                animateVector3(selectedObject.position, basePos, {
+                animateVector3(selectedObject.rotation, baseSelectedRot,{
                     duration: 500,
                     //easing : TWEEN.Easing.Quadratic.InOut,
                     update: function (d) {
                         //console.log("Updating: " + d);
                     },
                     callback: function () {
-                        //console.log("Completed");
-                        //orbitcontrol.enabled = false;
-                        orbitcontrol.autoRotate = false;
-                        needle1Model.visible = true;
-                        needle2Model.visible = true;
-                        ingectionSyringeModel.visible = true;
-                        startSecondStep();
-                        orbitcontrol.enabled = true;
+                        //if (Objcallback) Objcallback();
+                        animateVector3(selectedObject.position, basePos, {
+                            duration: 500,
+                            //easing : TWEEN.Easing.Quadratic.InOut,
+                            update: function (d) {
+                                //console.log("Updating: " + d);
+                            },
+                            callback: function () {
+                                //console.log("Completed");
+                                //orbitcontrol.enabled = false;
+                                orbitcontrol.autoRotate = false;
+                                needle1Model.visible = true;
+                                needle2Model.visible = true;
+                                ingectionSyringeModel.visible = true;
+                                startSecondStep();
+                                orbitcontrol.enabled = true;
+                            }
+                        });
                     }
                 });
             });
@@ -749,6 +759,20 @@ function mooveSelectedObjAction(obj, Objcallback) {
             }
 
             if (Objcallback) Objcallback();
+            baseSelectedRot.x = selectedObject.rotation.x;
+            baseSelectedRot.y = selectedObject.rotation.y;
+            baseSelectedRot.z = selectedObject.rotation.z;
+            let target_rot = new THREE.Vector3(selectedObject.rotation.x + 0.2,selectedObject.rotation.y,selectedObject.rotation.z)
+            animateVector3(selectedObject.rotation, target_rot,{
+                duration: 500,
+                //easing : TWEEN.Easing.Quadratic.InOut,
+                update: function (d) {
+                    //console.log("Updating: " + d);
+                },
+                callback: function () {
+                    //if (Objcallback) Objcallback();
+                }
+            });
         }
     });
 }
@@ -843,7 +867,7 @@ function mooveCameraToTarget() {
             {
                 reversOpenPackageAnimation();
             }
-            console.log("camera position in target", camera.position, currentCameraTarget);
+            //console.log("camera position in target", camera.position, currentCameraTarget);
         }
 
     }
