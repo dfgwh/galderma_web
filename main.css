@@ -29,9 +29,9 @@
 }
 
 @font-face {
-    font-family: 'Gilroy-Medium';
+    font-family: 'Gilroy-Regular';
     src:
-        url('fonts/Gilroy/Gilroy-Medium.ttf') format('truetype');
+        url('fonts/Gilroy/Gilroy-Regular.ttf') format('truetype');
     font-weight: normal;
     font-style: normal;
 }
@@ -58,7 +58,7 @@ body {
 	color: #000;
 	overflow: hidden;
     font-size: .8em;
-    font-family: 'Gilroy-Medium', sans-serif;
+    font-family: 'Gilroy-Regular', sans-serif;
 	font-style: normal;
 	font-weight: normal;
 	line-height: 24px;
@@ -275,6 +275,13 @@ a, button, input, select {
 }
 
 @media (max-width: 600px) {
+	#prepareButton {
+		right: 10px;
+		left: auto;
+	}
+}
+
+@media (max-width: 380px) {
 	#prepareButton {
 		left: 10px;
 		bottom: 60px;

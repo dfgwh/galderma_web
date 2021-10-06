@@ -705,7 +705,7 @@ function mooveSelectedObjAction(obj, Objcallback) {
     document.getElementById("prepareButton").style.display = "none";
     document.getElementById("backButton").style.display = "none";
 
-    var target = (stepindeex == '5') ? (new THREE.Vector3(0, 0, 0)) : (new THREE.Vector3(0, 0, 0));
+    var target = (stepindeex == '5') ? (new THREE.Vector3(0, -0.03, 0)) : (new THREE.Vector3(0, 0, -0.03));
     basePos = new THREE.Vector3();
     basePos.x = obj.position.x;
     basePos.y = obj.position.y;
@@ -733,6 +733,7 @@ function mooveSelectedObjAction(obj, Objcallback) {
                     document.getElementById("needle_info").style.display = "block";
                 }            
             });
+            console.log(selectedObject.position);
             let target_rot = new THREE.Vector3(selectedObject.rotation.x + 0.2, selectedObject.rotation.y, selectedObject.rotation.z);
             animateVector3(selectedObject.rotation, target_rot, {
                 duration: 2000,
