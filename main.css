@@ -191,6 +191,11 @@ a, button, input, select {
 	color: #020828;
 }
 
+#prepareButton .blockInButton span {
+	left: 52px;
+}
+
+
 #prepareButton .blockInButton img {
 	position: absolute;
 	height: 30px;
@@ -267,7 +272,7 @@ a, button, input, select {
 
 .post_header {
 	color: #FFFFFF;
-	font-size: 28px;
+	font-size: 26px;
 	font-weight: 700;
 }
 .label {
