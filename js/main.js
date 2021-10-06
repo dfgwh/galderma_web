@@ -21,7 +21,7 @@ let currentCameraTarget;
 
 let model, mainmodel, ingectionSyringeModel, needle1Model,
     needle2Model, box, form, manual, formcup,
-    plangerCap, needleCase, needleCap, selectedObject, armatur;
+    plangerCap, needleCase, needleCap, selectedObject, armatur, complect_t;
 let basePos, baseBoxPos, baseSelectedRot;
 let injectorGlass;
 const cubeRenderTarget = new THREE.WebGLCubeRenderTarget(2048);
@@ -108,7 +108,7 @@ function init() {
             root.scale.set(60, 60, 60)
             scene.add(root);
             mainmodel = root;
-            //console.log(dumpObject(root).join('\n'));
+            console.log(dumpObject(root).join('\n'));
             skeleton = new THREE.SkeletonHelper(root);
             skeleton.visible = false;
             scene.add(skeleton);
@@ -133,7 +133,10 @@ function init() {
                     baseBoxPos.y = child.position.y;
                     baseBoxPos.z = child.position.z;
                 }
-
+                if (child.name == "Complect_t") {
+                    complect_t = child;
+                }
+                
                 if (child.name == "Injector_t") {
                     ingectionSyringeModel = child;
                 }
@@ -419,18 +422,38 @@ function startPrepareAnimation() {
 }
 
 function reversPrepareAnimation() {
-    timer_delta = prepareAnimationTime;
-
-    scene_action.paused = false;
-    scene_action.timeScale = -1;
-    scene_action.setLoop(THREE.LoopOnce);
-
-    isAnimate = true;
-    isPrepareAnimate = true;
-
-    scene_action.paused = false;
     document.getElementById("full_injector_info").style.display = "none";
     document.getElementById("backButton").style.display = "none";
+    animateVector3(complect_t.rotation, baseSelectedRot, {
+        duration: 2000,
+        //easing : TWEEN.Easing.Quadratic.InOut,
+        update: function (d) {
+            //console.log("Updating: " + d);
+        },
+        callback: function () {
+            //console.log("Completed");
+            animateVector3(complect_t.position, basePos, {
+                duration: 2000,
+                //easing : TWEEN.Easing.Quadratic.InOut,
+                update: function (d) {
+                    //console.log("Updating: " + d);
+                },
+                callback: function () {
+                    //console.log("Completed");
+                    timer_delta = prepareAnimationTime;
+
+                    scene_action.paused = false;
+                    scene_action.timeScale = -1;
+                    scene_action.setLoop(THREE.LoopOnce);
+                
+                    isAnimate = true;
+                    isPrepareAnimate = true;
+                
+                    scene_action.paused = false;
+                }
+            });
+        }
+    });
 }
 
 function endReversPrepareAnimation() {
@@ -446,10 +469,45 @@ function endReversPrepareAnimation() {
 }
 
 function endPrepareAnimation() {
-    document.getElementById("backButton").style.display = "block";
-    document.getElementById("full_injector_info").style.display = "block";
-    switchOrbitController(true);
-    orbitcontrol.autoRotate = true;
+
+    var target = new THREE.Vector3(0, -0.03, 0);
+    basePos = new THREE.Vector3();
+    basePos.x = complect_t.position.x;
+    basePos.y = complect_t.position.y;
+    basePos.z = complect_t.position.z;
+
+    animateVector3(complect_t.position, target, {
+        duration: 2000,
+        //easing : TWEEN.Easing.Quadratic.InOut,
+        update: function (d) {
+            //console.log("Updating: " + d);
+        },
+        callback: function () {
+            //console.log("Completed");
+            baseSelectedRot.x = complect_t.rotation.x;
+            baseSelectedRot.y = complect_t.rotation.y;
+            baseSelectedRot.z = complect_t.rotation.z;
+            setMainDefaultPosition(cameraSelectedObjectPosition, function () {
+ 
+                let target_rot = new THREE.Vector3(complect_t.rotation.x + 0.2, complect_t.rotation.y, complect_t.rotation.z);
+                animateVector3(complect_t.rotation, target_rot, {
+                    duration: 2000,
+                    //easing : TWEEN.Easing.Quadratic.InOut,
+                    update: function (d) {
+                        //console.log("Updating: " + d);
+                    },
+                    callback: function () {
+                        //if (Objcallback) Objcallback();
+                        document.getElementById("backButton").style.display = "block";
+                        document.getElementById("full_injector_info").style.display = "block";
+                        switchOrbitController(true);
+                        orbitcontrol.autoRotate = true;    
+                    }
+                });     
+            });
+        }
+    });
+
 }
 
 function startSecondStep() {
