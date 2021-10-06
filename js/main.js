@@ -108,7 +108,7 @@ function init() {
             root.scale.set(60, 60, 60)
             scene.add(root);
             mainmodel = root;
-            console.log(dumpObject(root).join('\n'));
+            //console.log(dumpObject(root).join('\n'));
             skeleton = new THREE.SkeletonHelper(root);
             skeleton.visible = false;
             scene.add(skeleton);
@@ -276,7 +276,7 @@ function createScene() {
     camera.position.set(-35, 20, 17);
     camera.lookAt(0, 1, 0);
     cameraBasePosition = new THREE.Vector3();
-    cameraTargetPosition = new THREE.Vector3(3, 8, -17);
+    cameraTargetPosition = new THREE.Vector3(3, 8, -15);
     cameraSelectedObjectPosition = new THREE.Vector3(3, 8, -10);
 
     document.addEventListener('mousedown', onDocumentMouseDown, false);
