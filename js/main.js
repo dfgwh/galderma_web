@@ -733,7 +733,6 @@ function mooveSelectedObjAction(obj, Objcallback) {
                     document.getElementById("needle_info").style.display = "block";
                 }            
             });
-            console.log(selectedObject.position);
             let target_rot = new THREE.Vector3(selectedObject.rotation.x + 0.2, selectedObject.rotation.y, selectedObject.rotation.z);
             animateVector3(selectedObject.rotation, target_rot, {
                 duration: 2000,

@@ -63,6 +63,7 @@ body {
 	font-weight: normal;
 	line-height: 24px;
 	overscroll-behavior: none;
+	user-select: none;
 }
 
 a {
@@ -94,7 +95,7 @@ a, button, input, select {
 
 #openPackageButton {
 	position: absolute;
-	width: 160px;
+	width: 170px;
 	height: 50px;
 	left: calc(50% - 80px);
 	bottom: 5px;
@@ -105,7 +106,7 @@ a, button, input, select {
 
 #backButton {
 	position: absolute;
-	width: 135px;
+	width: 145px;
 	height: 50px;
 	left: 10px;
 	bottom: 5px;
@@ -132,7 +133,7 @@ a, button, input, select {
 	position: absolute;
 	width: 100px;
 	height: 40px;
-	right: 10px;
+	left: 55px;
 	top: 5px;
 	
 	/*font-family: Segma;*/
@@ -140,7 +141,7 @@ a, button, input, select {
 	font-weight: 600;
 	font-size: 21px;
 	line-height: 30px;
-	text-align: center;
+	text-align: left;
 	color: #020828;
 }
 
@@ -165,9 +166,9 @@ a, button, input, select {
 
 #prepareButton {
 	position: absolute;
-	width: 230px;
+	width: 240px;
 	height: 50px;
-	left: calc(50% - 115px);
+	left: calc(50% - 120px);
 	bottom: 5px;
 	border: 2px solid #A7DFDE;
 	box-sizing: border-box;
@@ -180,13 +181,13 @@ a, button, input, select {
 #backButton .blockInButton span, #prepareButton .blockInButton span {
 	position: absolute;
 	height: 40px;
-	right: 10px;
+	left: 55px;
 	top: 4px;
 	font-style: normal;
 	font-weight: 600;
 	font-size: 21px;
 	line-height: 25px;
-	text-align: center;
+	text-align: left;
 	color: #020828;
 }
 
@@ -281,7 +282,7 @@ a, button, input, select {
 	}
 }
 
-@media (max-width: 380px) {
+@media (max-width: 405px) {
 	#prepareButton {
 		left: 10px;
 		bottom: 60px;
