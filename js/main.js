@@ -207,13 +207,13 @@ function init() {
             needle1Label.position.set(0, 0, 0);
             needle1Model.add(needle1Label);
 
-            const needle2Img = document.createElement('img');
+            /*const needle2Img = document.createElement('img');
             needle2Img.className = 'label';
             needle2Img.src = 'images/label_needle.svg';
             needle2Img.style.marginTop = '-1em';
             needle2Label = new CSS2DObject(needle2Img);
             needle2Label.position.set(0, 0, 0);
-            needle2Model.add(needle2Label);
+            needle2Model.add(needle2Label);*/
 
             switchLabel(false);
 
@@ -746,7 +746,7 @@ function InitUIClick() {
 function switchLabel(key) {
     injectorLabel.visible = key;
     needle1Label.visible = key;
-    needle2Label.visible = key;
+   // needle2Label.visible = key;
 }
 
 document.addEventListener('click', onDocumentMouseDown, false);
@@ -983,7 +983,7 @@ function onClickObject(vector, key) {
                     });
                     return;
                 }
-                if ((element.object.name == "NeedleCase2" ||
+                /*if ((element.object.name == "NeedleCase2" ||
                     element.object.name == "NeedleCase2Glass")
                     && stepindeex == '1') {
                     switchLabel(false);
@@ -996,7 +996,7 @@ function onClickObject(vector, key) {
                         orbitcontrol.autoRotate = true;
                     });
                     return;
-                }
+                }*/
             });
         }
     }
